@@ -7,10 +7,9 @@ git checkout -b REL9_5_STABLE origin/REL9_5_STABLE
 ./configure --prefix=$HOME/installed    
 make 
 make install
-# use curl to download Apache httpd-2.4.25
+
 cd $HOME
-curl http://www.gtlib.gatech.edu/pub/apche//httpd/httpd-2.4.25.tar.bz2 > httpd-2.4.25.tar.bz2
-# configure/make/install httpd
+curl http://www.gtlib.gatech.edu/pub/apache//httpd/httpd-2.4.25.tar.bz2 > httpd-2.4.25.tar.bz2
 tar -xjf httpd-2.4.25.tar.bz2
 cd httpd-2.4.25
 ./configure --prefix=$HOME/installed
