@@ -4,7 +4,7 @@ import csv
 
 def products():
 
-	with open('/home/osnapdev/uocis322/osnap_legacy/product_list.csv', 'r') as csvfile, open('/home/osnapdev/uocis322/osnap_legacy/products.csv', 'w') as outfile:
+	with open('/home/osnapdev/uocis322/sql/osnap_legacy/product_list.csv', 'r') as csvfile, open('/home/osnapdev/uocis322/sql/osnap_legacy/products.csv', 'w') as outfile:
 		title  = ['vendor', 'description']
 		reader = csv.DictReader(csvfile)
 		writer = csv.DictWriter(outfile, fieldnames=title)
