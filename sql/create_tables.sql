@@ -9,7 +9,7 @@ CREATE TABLE products (
 
 CREATE TABLE assets (
 	asset_pk         serial primary key,
-	product_fk       integer references products(product_pk) not null,
+	product_fk       integer references products(product_pk),
 	asset_tag        text,
 	description      text,
 	alt_description  text
@@ -17,7 +17,7 @@ CREATE TABLE assets (
 
 CREATE TABLE vehicles (
 	vehicle_pk       serial primary key,
-	asset_fk         integer references assets(asset) not null
+	asset_fk         integer references assets(asset_pk) not null
 );
 
 CREATE TABLE facilities (
