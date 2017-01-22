@@ -9,7 +9,14 @@
 ## now osnap_legacy is a directory of csv files in our directory.
 # use psql to import everything into the database??
 # waiwaiwait, what about the "psql -c "COPY tbname FROM 'PATH/products.csv' delimiter ......" " ????
+python3 products.py
 
+psql -d $1 -c "COPY products FROM './products.csv' DELIMITER '|' CSV;"
+
+rm products.csv
+
+COMMENT=false
+if ${COMMENT}; then
 python3 insert1.py > tmp.sql # put insertion statements into sql file.
 
 psql $1 -p $2 -f tmp.sql     
@@ -37,4 +44,4 @@ psql $1 -p $2 -f tmp.sql
 python3 insert1.py > tmp.sql 
 
 psql $1 -p $2 -f tmp.sql 
-
+fi
