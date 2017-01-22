@@ -64,59 +64,42 @@ CREATE TABLE users {
 	active          boolean
 };
 
-CREATE TABLE assets {
-	asset_pk         serial primary key,
-	product_fk       integer not null,
-	asset_tag        varchar(256),
-	description      varchar(255),
-	alt_description  varchar(256)
+CREATE TABLE roles {
+	role_pk        serial primary key,
+	title          text
 };
 
-CREATE TABLE assets {
-	asset_pk         serial primary key,
-	product_fk       integer not null,
-	asset_tag        varchar(256),
-	description      varchar(255),
-	alt_description  varchar(256)
+CREATE TABLE user_is {
+	user_fk         integer not null,
+	role_fk         integer not null,
 };
 
-CREATE TABLE assets {
-	asset_pk         serial primary key,
-	product_fk       integer not null,
-	asset_tag        varchar(256),
-	description      varchar(255),
-	alt_description  varchar(256)
+CREATE TABLE user_supports {
+	user_fk         integer not null,
+	facility_fk     integer not null,
 };
 
-CREATE TABLE assets {
-	asset_pk         serial primary key,
-	product_fk       integer not null,
-	asset_tag        varchar(256),
-	description      varchar(255),
-	alt_description  varchar(256)
+
+
+
+CREATE TABLE levels {
+	level_pk         serial primary key,
+	abbrv            text,
+	comment          text
 };
 
-CREATE TABLE assets {
-	asset_pk         serial primary key,
-	product_fk       integer not null,
-	asset_tag        varchar(256),
-	description      varchar(255),
-	alt_description  varchar(256)
+CREATE TABLE compartments {
+	compartment_pk   serial primary key,
+	abbrv            text,
+	comment          text
 };
 
-CREATE TABLE assets {
-	asset_pk         serial primary key,
+CREATE TABLE security_tags {
+	tag_pk           serial primary key,
+	level_fk         integer not null,
+	compartment_fk   integer not null,
+	user_fk          integer not null,
 	product_fk       integer not null,
-	asset_tag        varchar(256),
-	description      varchar(255),
-	alt_description  varchar(256)
-};
-
-CREATE TABLE assets {
-	asset_pk         serial primary key,
-	product_fk       integer not null,
-	asset_tag        varchar(256),
-	description      varchar(255),
-	alt_description  varchar(256)
+	asset_fk         integer not null,
 };
 
