@@ -9,7 +9,7 @@ CREATE TABLE products (
 
 CREATE TABLE assets (
 	asset_pk         serial primary key,
-	product_fk       integer references products(product_pk),
+	product_fk       integer references products(product_pk) on update cascade,
 	asset_tag        text,
 	description      text,
 	alt_description  text
@@ -98,8 +98,8 @@ CREATE TABLE security_tags (
 	tag_pk           serial primary key,
 	level_fk         integer not null,
 	compartment_fk   integer not null,
-	user_fk          integer not null,
-	product_fk       integer not null,
-	asset_fk         integer not null
+	user_fk          integer,
+	product_fk       integer,
+	asset_fk         integer
 );
 
