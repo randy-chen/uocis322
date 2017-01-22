@@ -9,7 +9,7 @@ CREATE TABLE products (
 
 CREATE TABLE assets (
 	asset_pk         serial primary key,
-	product_fk       integer references products(product_pk) on update cascade,
+	product_fk       integer references products(product_pk),
 	asset_tag        text,
 	description      text,
 	alt_description  text
