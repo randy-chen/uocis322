@@ -18,61 +18,53 @@ def assets():
 		reader5 = csv.DictReader(csv5)
 
 		for row in reader:
-			fk   = none
-            desc = none
+			fk   = None
+			desc = None	
 			cur.execute("select product_pk from products where products.alt_description=%s", (row['product'],) )
-			fk   = cur.fetchone()[0]
-			cur.execute("select description from products where products.alt_description=%s",  (fk,) ) 
-			desc = cur.fetchone()[0]
-			cur.execute("insert into assets(product_fk, asset_tag, description) values (%s,%s,%s)", (fk, row['asset tag'],desc,) )
+			fk = cur.fetchone()	
+			if (fk != None):
+				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
+				desc = cur.fetchone()
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'MB005',) )
 
 		for row in reader2:
-			fk   = none
-            desc = none
+			fk   = None
+			desc = None	
 			cur.execute("select product_pk from products where products.alt_description=%s", (row['product'],) )
-			fk   = cur.fetchone()[0]
-			cur.execute("select description from products where products.alt_description=%s", (fk,) ) 
-			desc = cur.fetchone()[0]
-			cur.execute("insert into assets(product_fk, asset_tag, description) values (%s,%s,%s)", (fk, row['asset tag'],desc,) )
+			fk = cur.fetchone()	
+			if (fk != None):
+				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
+				desc = cur.fetchone()
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'ST',) )
 		for row in reader3:
-			fk   = none
-            desc = none
+			fk   = None
+			desc = None	
 			cur.execute("select product_pk from products where products.alt_description=%s", (row['product'],) )
-			fk   = cur.fetchone()[0]
-			cur.execute("select description from products where products.alt_description=%s", (fk,) ) 
-			desc = cur.fetchone()[0]
-			cur.execute("insert into assets(product_fk, asset_tag, description) values (%s,%s,%s)", (fk, row['asset tag'],desc,) )
+			fk = cur.fetchone()	
+			if (fk != None):
+				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
+				desc = cur.fetchone()
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'GL',) )
 		for row in reader4:
-			fk   = none
-            desc = none
+			fk   = None
+			desc = None	
 			cur.execute("select product_pk from products where products.alt_description=%s", (row['product'],) )
-			fk   = cur.fetchone()[0]
-			cur.execute("select description from products where products.alt_description=%s", (fk,) ) 
-			desc = cur.fetchone()[0]
-			cur.execute("insert into assets(product_fk, asset_tag, description) values (%s,%s,%s)", (fk, row['asset tag'],desc,) )
+			fk = cur.fetchone()	
+			if (fk != None):
+				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
+				desc = cur.fetchone()
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'LA',) )
 		for row in reader5:
-			fk   = none
-            desc = none
+			fk   = None
+			desc = None	
 			cur.execute("select product_pk from products where products.alt_description=%s", (row['product'],) )
-			fk   = cur.fetchone()[0]
-			cur.execute("select description from products where products.alt_description=%s", (fk,) ) 
-			desc = cur.fetchone()[0]
-			cur.execute("insert into assets(product_fk, asset_tag, description) values (%s,%s,%s)", (fk, row['asset tag'],desc,) )
-		'''
-		for row in reader3:
-			cur.execute("insert into assets(product_fk, asset_tag) values (%s, %s)", ((select product_pk from products where description=row['product']),row['asset tag'],) )
-		for row in reader3:
-
-		for row in reader4:
-			cur.execute("insert into assets(product_fk, asset_tag) values (%s, %s)", ((select product_pk from products where description=row['product']),row['asset tag'],) )
-		for row in reader4:
-
-		for row in reader5:
-			cur.execute("insert into assets(product_fk, asset_tag) values (%s,%s)", ((select product_pk from products where description=row['product']),row['asset tag'],) )
-		for row in reader5:'''
+			fk = cur.fetchone()	
+			if (fk != None):
+				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
+				desc = cur.fetchone()
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'MB005') )
 			# <<need to get the descriptions of the products>>	
 
-			# cur.execute("update assets set product_fk =  where asset_tag = %s", row['asset tag'])
 			# print(row['vendor'])
 
 	return
