@@ -2,10 +2,9 @@
 
 
 
-# curl https://classes.cs.uoregon.edu//17W/cis322/files/osnap_legacy.tar.gz > legacy.tar.gz 
-# tar -xzvf legacy.tar.gz
+curl https://classes.cs.uoregon.edu//17W/cis322/files/osnap_legacy.tar.gz > legacy.tar.gz 
+tar -xzvf legacy.tar.gz
 psql $1 -f create_tables.sql
-## now osnap_legacy is a directory of csv files in our directory.
 
 python3      products.py $1 $2
 python3        assets.py $1 $2
@@ -32,6 +31,6 @@ fi
 
 
 
-# rm somthing
+# rm temporary files, if any
 
 
