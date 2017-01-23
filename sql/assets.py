@@ -25,7 +25,7 @@ def assets():
 			if (fk != None):
 				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
 				desc = cur.fetchone()
-			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'MB005',) )
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'HQ',) )
 
 		for row in reader2:
 			fk   = None
@@ -35,7 +35,7 @@ def assets():
 			if (fk != None):
 				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
 				desc = cur.fetchone()
-			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'ST',) )
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'NC',) )
 		for row in reader3:
 			fk   = None
 			desc = None	
@@ -44,7 +44,7 @@ def assets():
 			if (fk != None):
 				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
 				desc = cur.fetchone()
-			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'GL',) )
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'SPNV',) )
 		for row in reader4:
 			fk   = None
 			desc = None	
@@ -53,7 +53,7 @@ def assets():
 			if (fk != None):
 				cur.execute("select description from products where products.product_pk=%s",  (fk,) ) 
 				desc = cur.fetchone()
-			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'LA',) )
+			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'DC',) )
 		for row in reader5:
 			fk   = None
 			desc = None	

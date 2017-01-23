@@ -58,7 +58,7 @@ def asset_at():
 			if (i >= 8 and i < 10):
 				cur.execute("select asset_pk from assets where assets.asset_tag=%s", (entriesaslist[i],) )
 				afk    = cur.fetchone()	
-				cur.execute("select facility_pk from facilities where facilities.fcode=%s", ('MB005',) )
+				cur.execute("select facility_pk from facilities where facilities.fcode=%s", ('SPNV',) )
 				ffk    = cur.fetchone()	
 				arrive = '1/8/2017'	
 				depart = '1/8/2017'	
