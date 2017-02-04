@@ -1,18 +1,23 @@
-The files in this directory implement a very simple web application to take in and present user entered data.
+The files in this directory implement a simple web application to take in
 
-The form on the welcome page submits to the goodbye page, which displays the data the user entered. If the expected data is missing, the goodbye page renders the index.htmltemplate instead of the goodbye template.
-
-Note on the _bad_ design shown:
-The design currently in this directory, while it works, does not follow best practices. The URL that presents a form should also be the action target for the form. This makes the web application much easier to maintain since the page responsible for the form is also responsible for parsing the form.
-
-Redirects should be used to point the user to the correct next page after their input data has been processed; in both the success and failure cases.
-
+The form on the login page submits to the Report Filters page, which lets the user generate reports on facilities and assets as well as which assets are in transit. There is also a logout page which can be reached from either report page and the filters page. From the logout screen, the user can go back to the login screen, which will take them to the filters page, where they can generate and view more reports if they wish. 
 
 Files:
-app.py - A Flask app to be run via mod_wsgi
+app.py - A Flask app to be run using python.
 config.py - Logic to find and read the configuration into memory
 lost_config.json - a sample configuration file
 templates/
-    index.html - a template for the root path
-    welcome.html - a template for the welcome page
-    goodbye.html - a template for the goodbye page
+    login.html - a template for the user login page
+    rfs.html - a template for page where the user can filter and generate reports
+    facilities.html - a template for the Facility Inventory Report page
+    transit.html - a template for the In Transit Report page
+    logout.html - a template for the logout page
+
+
+
+Usage (after database cluster and database have been created):
+
+$ cd ..
+$ ./preflight.sh <dbname>
+$ cd src
+$ python3 app.py <dbname> <dbport>
