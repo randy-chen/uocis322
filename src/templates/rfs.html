@@ -1,0 +1,21 @@
+<html>
+	<head><title>Filter Reports</title></head>
+	<body><h1>Ay, how's it going?</h1>
+	<p>You entered {{data}} from the login screen.</p>
+		
+	<p>Enter information below for a report on facility inventory.</p>
+		<form action="{{url_for('facilities')}}">
+			<input type="text" name="facilities" />
+			<input type="submit" name="submit" />
+		</form>
+	<p>For information on what is in transit, enter data below.</p>
+		<form action="{{url_for('transit')}}">
+			<input type="text" name="transit" />
+			<input type="submit" name="submit" />
+		</form>
+	<p>To logout, click here.</p>
+		<form action="{{url_for('logout')}}">
+			<input type="submit" name="submit" />
+		</form>
+	</body>
+</html>
