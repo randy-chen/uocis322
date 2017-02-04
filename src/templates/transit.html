@@ -2,6 +2,7 @@
 	<head><title>In Transit</title></head>
 	<body><h1>In Transit Report</h1>
 	<p>You entered {{data}} from filters.</p>
+	<p>{{session['result']}}</p>
 	<p>Click the button below to logout.</p>
 		<form action="{{url_for('logout')}}">
 			<input type="submit" name="submit" />
