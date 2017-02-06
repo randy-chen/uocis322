@@ -21,3 +21,5 @@ $ cd ..
 $ ./preflight.sh <dbname>
 $ cd src
 $ python3 app.py <dbname> <dbport>
+
+Open a browser on your machine and go the url http://localhost:8080 to begin interacting with the application.
