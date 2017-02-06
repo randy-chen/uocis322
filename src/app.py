@@ -3,13 +3,13 @@ from config import dbname, dbhost, dbport
 import psycopg2, sys
 
 app = Flask(__name__)
-conn = psycopg2.connect(dbname=sys.argv[1], host='127.0.0.1', port=int(sys.argv[2]))#dbname, host=dbhost, port=dbport)
+conn = psycopg2.connect(dbname=dbname, host=dbhost, port=dbport)
 cur  = conn.cursor()
 
 
 @app.route('/')
 def login():
-    return render_template('login.html',dbname=sys.argv[1],dbhost='127.0.0.1',dbport=int(sys.argv[2]))
+    return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
 @app.route('/rfs')
 def rfs():

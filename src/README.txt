@@ -20,6 +20,6 @@ Usage (after database cluster and database have been created):
 $ cd ..
 $ ./preflight.sh <dbname>
 $ cd src
-$ python3 app.py <dbname> <dbport>
+$ python3 app.py 
 
 Open a browser on your machine and go the url http://localhost:8080 to begin interacting with the application.
