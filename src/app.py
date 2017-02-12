@@ -145,7 +145,7 @@ where product_fk is not NULL and c.abbrv||':'||l.abbrv = ANY(%s)"""
     conn.close()
     return data
 
-@app.route('/rest/add_product', methods=('POST',))
+@app.route('/rest/add_products', methods=('POST',))
 def add_product():
 	if request.method=='POST' and 'arguments' in request.form:
 		req=json.loads(request.form['arguments'])	

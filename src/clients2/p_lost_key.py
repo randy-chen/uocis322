@@ -33,7 +33,7 @@ def main():
     resp = json.loads(res.read().decode('ascii'))
     
     # Print the result code
-    print("Call to LOST returned: %s"%resp['result'])
+    print("Call to LOST returned: %s"%resp)
     print("Key returned in base64:\n%s"%resp['key'])
     
 
