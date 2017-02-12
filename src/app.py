@@ -12,6 +12,8 @@ def login():
     return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
 @app.route('/rest')
+def rest():
+	return render_template('rest.html')
 
 @app.route('/rest/lost_key', methods=('POST',))
 def lost_key():

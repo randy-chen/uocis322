@@ -1,0 +1,77 @@
+<html>
+	<head><title>REST</title></head>
+	<body><h1>API Calls</h1>
+	<p>
+	<b>http://127.0.0.1:8080/rest/lost_key</b><br>
+This is the only lost call that does not authenticate the requester and uses plaintext input
+and output.<br><br>
+
+Request -<br>
+The request does not provide values for any of the arguments though the data and
+signature fields must be present in the request.<br><br>
+
+Response -<br>
+result: ‘OK’ or ‘FAIL’<br>
+key: The LOST public key<br><br>
+	
+	<b>http://127.0.0.1:8080/rest/activate_user</b><br>
+Reactivates LOST access for a user or generates a new user account if needed.<br><br>
+
+Request -<br>
+username: OSNAP username to activate<br><br>
+
+Response -<br>
+result: ‘OK’, ‘NEW’, or ‘FAIL’<br><br>
+
+	<b>http://127.0.0.1:8080/rest/suspend_user</b><br>
+Revokes access for a user. If the user does not exist or access has already been revoked,
+this call has no effect.<br><br>
+
+Request -<br>
+username: OSNAP username to revoke<br><br>
+
+Response -<br>
+result: ‘OK’<br><br>
+	
+	<b>http://127.0.0.1:8080/rest/list_products</b><br>
+Requests a listing of all products in LOST based on a filter criteria. Additional filters may
+be provided and additional data may be returned. The requests of the minimum form
+documented in the example must be accepted and the produced result must have at least
+the structure and fields of example provided. Asset information may not be provided by
+this call (e.g. no returning number of assets that are of product types).<br><br>
+
+Request -<br>
+vendor: Case insensitive string to match against vendor name<br>
+description: Case insensitive string to match against product description<br>
+compartments: Security tags for the asset as a json array, all tags must be matched for
+compartment and level.<br><br>
+
+Response -<br>
+listing: a json list containing the product information entries<br><br>
+
+	<b>http://127.0.0.1:8080/rest/add_products</b><br>
+Adds products to LOST. Requests should be atomic (all products are added or no products
+are added) and attempting to add a duplicate product should cause the request
+to fail. A product is duplicated if at the end of the call the database would have two
+products with the same vendor and description.<br><br>
+
+Request -<br>
+new products: a json list describing the new products<br><br>
+
+Response -<br>
+result: ‘OK’, or ‘FAIL’<br><br>
+
+	<b>http://127.0.0.1:8080/rest/add_asset</b><br>
+Adds a new asset to LOST.<br><br>
+
+Request -<br>
+vendor: Vendor of the product<br>
+description: Description of the product<br>
+compartments: Additional compartments the asset should be classified under<br>
+facility: Facility code the asset is initially housed at<br><br>
+
+Response -<br>
+result: ‘OK’, or ‘FAIL’
+	</p>
+	</body>
+</html>
