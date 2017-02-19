@@ -36,7 +36,7 @@ def create_user():
 			cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (usern,passw,))
 			conn.commit()
 			session['user'] = usern
-			return render_template('success.html')
+			return redirect('success')
 
 	session['user'] = ""
 	return redirect(url_for('error'))
