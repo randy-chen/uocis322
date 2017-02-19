@@ -6,6 +6,7 @@ app = Flask(__name__)
 conn = psycopg2.connect(dbname=dbname, host=dbhost, port=dbport)
 cur  = conn.cursor()
 
+app.secret_key = "onsapwhoderp?"
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -71,5 +72,4 @@ def error():
 
 
 if __name__ == "__main__":
-	app.secret_key = "onsapwhoderp?"
 	app.run(host='0.0.0.0', port=8080)
