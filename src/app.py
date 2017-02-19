@@ -8,49 +8,43 @@ cur  = conn.cursor()
 
 
 @app.route('/')
+def index():
+    return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
+
+@app.route('/login')
 def login():
     return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
-@app.route('/rest')
-def rest():
-	return render_template('rest.html')
 
-@app.route('/rest/lost_key', methods=('POST',))
-def lost_key():
-	#if request.method=='POST' and 'arguments' in request.form:
-		#print(request.form['arguments'], '\nprinted')
-		#req=json.loads(request.form['arguments'])	
-
-	dat = dict()
-	dat['timestamp'] = '13'	
-	dat['result'] = 'OK'
-	dat['key'] = 'Im_excited_for_the_next_half_of_the_term!'	
-	data = json.dumps(dat)
-	
-	return data
-
-@app.route('/rest/activate_user', methods=('POST',))
+@app.route('/create_user', methods=['GET','POST'])
 def activate_user():
-	if request.method=='POST' and 'arguments' in request.form:
-		req=json.loads(request.form['arguments'])	
-	
-	dat = dict()
-	dat['timestamp'] = req['timestamp']	
-	dat['result'] = 'OK'
-	data = json.dumps(dat)
-	return data
+	if request.method=='GET':
+		return render_template('create.html')
 
-@app.route('/rest/suspend_user', methods=('POST',))
+	if request.method=='POST':
+		usern = request.form['user']
+		passw = request.form['pass']
+		if valid_input(usern):
+			
+			cur.execute("INSERT INTO users (username, password) 
+						VALUES (%s, %s)", (usern,passw,))
+	return render_template('error.html', data=session['blah'])
+	
+def valid_input(_username, _password):
+	cur.execute("SELECT username FROM users WHERE username=%s", (_username,))
+	existing_name = cur.fetchone()
+	if existing_name:
+		return False
+	return True
+	
+
+@app.route('/success')
 def suspend_user():
-	if request.method=='POST' and 'arguments' in request.form:
-		req=json.loads(request.form['arguments'])	
+	return render_template('success.html') 
 
-	dat = dict()
-	dat['timestamp'] =  req['timestamp']	
-	dat['result'] = 'OK'
-	data = json.dumps(dat)
-	
-	return data
+@app.route('/error')
+def suspend_user():
+	return render_template('error.html') 
 
 @app.route('/rest/list_products', methods=('POST',))
 def list_products():
