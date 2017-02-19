@@ -1,0 +1,33 @@
+<html>
+	<head><title>In Transit</title></head>
+	<body><h1>In Transit Report</h1>
+	<p>Assets in transit on {{data}}:</p>
+	<table>
+		<tr>
+			<td>| Request ID &nbsp; &nbsp;|</td>
+			<td>&nbsp; Asset Tag  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|</td>
+			<td>&nbsp; Load Date  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|</td>
+			<td>&nbsp; Unload Date  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|</td>	
+		</tr>
+		<tr>
+			<td>-----------------+</td>
+			<td>--------------------+</td>
+			<td>---------------------------+</td>
+			<td>------------------------------</td>
+		</tr>
+		{% for entry in session.report %}
+		<tr>
+			<td>{{ entry.request_id }}</td>
+			<td>{{ entry.asset_tag }}</td>
+			<td>{{ entry.load_dt }}</td>
+			<td>{{ entry.unload_dt }}</td>
+		</tr>
+		{% endfor %}	
+	</table>
+	<br></br>
+	<p>Click the button below to logout.</p>
+		<form action="{{url_for('logout')}}">
+			<input type="submit" name="submit" />
+		</form>
+	</body>
+</html>

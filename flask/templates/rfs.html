@@ -1,0 +1,29 @@
+<html>
+	<head><title>Filter Reports</title></head>
+	<body>
+	<p>You have logged in as {{data}}.</p>	
+	<h3>Enter information in one of the two fields below for a report on facility inventory:</h3>
+	<p>Filter by facility code (example: MB005):</p>
+		<form action="{{url_for('facilities')}}">
+			<input type="text" name="facilities" />
+			<input type="submit" name="submit" />
+		</form>
+	<p>Filter by date (mm/dd/yyyy):</p>
+		<form action="{{url_for('facilities')}}">
+			<input type="text" name="date" />
+			<input type="submit" name="submit" />
+		</form>
+	<p></p>
+	<h3>For information on what is in transit, enter a date (mm/dd/yyy) below:</h3>
+		<form action="{{url_for('transit')}}">
+			<input type="text" name="transit" />
+			<input type="submit" name="submit" />
+		</form>
+	<br></br>
+	<br></br>
+	<p>To log out, click the button below:</p>
+		<form action="{{url_for('logout')}}">
+			<input type="submit" name="submit" />
+		</form>
+	</body>
+</html>

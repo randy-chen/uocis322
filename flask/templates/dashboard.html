@@ -1,0 +1,9 @@
+<html>
+	<head><title>Dashboard</title></head>
+	<body><h1>Hi, {{session['user']}} :)</h1>
+	<p></p>
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log out" />
+		</form>
+	</body>
+</html>
