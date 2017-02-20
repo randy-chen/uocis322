@@ -1,4 +1,4 @@
-The files in this directory implement a simple web application to take in
+The files in this directory implement a simple web application that will allow users to create a new 'account' with a desired username and password pair, log in to their dashboard, and log out to the login screen again.
 
 
 Files:
@@ -28,4 +28,4 @@ $ ./preflight.sh <dbname>
 $ cd $HOME/wsgi 
 $ apachectl start
 
-Open a browser on your machine and go the url http://localhost:8080 to begin interacting with the application.
+Open a browser on your machine and go to the url http://localhost:8080 to begin interacting with the application.
