@@ -12,5 +12,17 @@
 		<form action="{{url_for('create_user')}}" method="GET">
 			New to OSNAP? <input type="submit" value="Create a new account" />
 		</form>
+	<br>
+		<form action="{{url_for('add_facility')}}" method="GET">
+			Got a new facility? <input type="submit" value="Add Facility" />
+		</form>
+	<br>
+		<form action="{{url_for('login')}}" method="GET">
+			Have new assets you'd like to add? <input type="submit" value="Add Asset" />
+		</form>
+	<br>
+		<form action="{{url_for('login')}}" method="GET">
+			Looking to get rid of an asset? <input type="submit" value="Dispose Asset" />
+		</form>
 	</body>
 </html>

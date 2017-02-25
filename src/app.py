@@ -24,6 +24,7 @@ def login():
 	
 	return redirect(url_for('error'))
 
+#session['db'] = dbname
 
 @app.route('/create_user', methods=['GET','POST'])
 def create_user():
@@ -63,6 +64,65 @@ def valid_login(_username, _password):
 			return True
 	return False
 	
+@app.route('/add_facility', methods=['GET','POST'])
+def add_facility():
+	if request.method=='GET':
+		sql = "SELECT common_name, fcode, location FROM facilities"
+		cur.execute(sql)
+		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+		processed_data = []   # this is the processed result I'll stick in the session (or pass to the template)
+		for r in res:
+			processed_data.append( dict(zip(('common_name', 'fcode', 'location'), r)) )
+		session['facilities'] = processed_data
+		return render_template('facility.html')
+
+	if request.method=='POST':
+		form_name = request.form['fname']
+		form_code = request.form['fcode']
+		form_loca = request.form['floca']
+		#if valid_facility(form_name,form_code):	
+		cur.execute("INSERT INTO facilities (common_name, fcode, location) VALUES (%s, %s, %s)", (form_name,form_code,form_loca,))
+		conn.commit()
+		return redirect(url_for('add_facility'))
+
+	return redirect(url_for('af_error'))
+"""
+@app.route('/create_user', methods=['GET','POST'])
+def create_user():
+	if request.method=='GET':
+		return render_template('create_user.html')
+
+	if request.method=='POST':
+		usern     = request.form['user']
+		passw     = request.form['pass']
+		form_role = request.form['role']
+		if valid_input(usern, passw):	
+			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
+			conn.commit()
+			session['user'] = usern
+			return redirect(url_for('success'))
+
+	session['user'] = ""
+	return redirect(url_for('error'))
+
+@app.route('/create_user', methods=['GET','POST'])
+def create_user():
+	if request.method=='GET':
+		return render_template('create_user.html')
+
+	if request.method=='POST':
+		usern     = request.form['user']
+		passw     = request.form['pass']
+		form_role = request.form['role']
+		if valid_input(usern, passw):	
+			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
+			conn.commit()
+			session['user'] = usern
+			return redirect(url_for('success'))
+
+	session['user'] = ""
+	return redirect(url_for('error'))
+"""
 @app.route('/success')
 def success():
 	return render_template('success.html') 
@@ -71,6 +131,9 @@ def success():
 def error():
 	return render_template('error.html') 
 
+@app.route('/af_error')
+def af_error():
+	return render_template('af_error.html') 
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', port=8080)

@@ -1,0 +1,34 @@
+<html>
+	<head><title>New Facility</title></head>
+	<body><h1>Add a facility here!</h1>
+	<p>Here are the facilities in the current database:</p>
+	<table>
+		<tr>
+			<td>| Facility &nbsp; &nbsp; &nbsp;|</td>
+			<td>&nbsp; Fcode  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|</td>
+			<td>&nbsp; Location  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|</td>
+		</tr>
+		<tr>
+			<td>--------------+</td>
+			<td>--------------------+</td>
+			<td>----------------------------+</td>
+			<td>-----------------------------</td>
+		</tr>
+		{% for entry in session.facilities %}
+		<tr>
+			<td>{{ entry.common_name }}</td>
+			<td>{{ entry.fcode }}</td>
+			<td>{{ entry.location }}</td>
+		</tr>
+		{% endfor %}	
+	</table>
+
+	<p>To create a new facility, enter your desired facility name, fcode, and location:</p>
+		<form action="{{url_for('add_facility')}}" method="POST">
+			Facility Common Name: <input type="text" name="fname" />
+			Facility Fcode: <input type="text" name="fcode" />
+			Location (optional): <input type="text" name="floca" /> 
+			<input type="submit" value="Add Facility"/>
+		</form>
+	</body>
+</html>
