@@ -27,8 +27,10 @@ CREATE TABLE facilities (
 	common_name      varchar(32),
 	location         text
 );
-
-CREATE TABLE asset_history (
+/* Really, this table is more like 'asset history'. It keeps track of where an asset has been as well
+   when it arrived and was disposed.
+*/
+CREATE TABLE asset_at (
 	asset_fk         integer references assets(asset_pk),
 	facility_fk      integer references facilities(facility_pk),
 	arrival          timestamp, 

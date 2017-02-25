@@ -4,7 +4,7 @@
 	<p>If you got here from trying to add a facility, follow these tips before trying again:</p>
 	<p>&lt;&gt; The facility's common name must not exceed its 32 character limit and be at least 1 character long.</p>
 	<p>&lt;&gt; The facility's fcode must not exceed its 6 character limit and be at least 1 character long.</p></p>
-	<p>&lt;&gt; The facility (either by name or focde) must not already exist.</p>
+	<p>&lt;&gt; The facility (either by name or fcode) must not already exist.</p>
 		<form action="{{url_for('add_facility')}}" method="GET">
 			<input type="submit" value="Return to Facility Add" />
 		</form>
@@ -12,13 +12,20 @@
 	<p>If you got here from trying to add an asset, remember that:</p>
 	<p>&lt;&gt; The asset tag must not exceed its 16 character limit and be at least 1 character long.</p>
 	<p>&lt;&gt; The asset tag you are trying to add must not match a tag that is already in the database.</p>
-		<form action="{{url_for('login')}}" method="GET">
+	<p>&lt;&gt; The asset tag must not be of an asset which has already been disposed of.</p>
+		<form action="{{url_for('add_asset')}}" method="GET">
 			<input type="submit" value="Return to Asset Add" />
 		</form>
 
-	<p>If you got here from trying to dipose of an asset, be sure that the asset exists and has yet to be disposed of.</p>
+	<p>If you got here from trying to dispose of an asset:</p>
+	<p>&lt;&gt; Be sure that the asset exists and has yet to be disposed of.</p>
+	<p>&lt;&gt; Check that you are not disposing an asset before its date of arrival (OSNAP does not condone time travel).</p>
+	<p>&lt;&gt; You have clearance to dispose assets (you are a Logistics Officer).</p>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form> &nbsp;
 		<form action="{{url_for('login')}}" method="GET">
-			<input type="submit" value="Return to Asset Dispose" />
-		</form>
+			<input type="submit" value="Return to Login" />
+		</form> &nbsp;
 	</body>
 </html>

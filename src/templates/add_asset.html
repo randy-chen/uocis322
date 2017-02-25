@@ -1,18 +1,56 @@
 <html>
 	<head><title>Add Asset</title></head>
 	<body><h1>Add a new asset here!</h1>
+	<table>
+		<tr>
+			<td>| &nbsp; Asset Tag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;|</td>
+			<td>&nbsp; Desciption  &nbsp; &nbsp; &nbsp;|</td>
+			<td>&nbsp; Facility &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>&nbsp; Date of Arrival  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>&nbsp; Status  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>&nbsp; Date Expunged  &nbsp; &nbsp;</td>
+		</tr>
+		<tr>
+			<td>--------------------------------------+</td>
+			<td>-------------+</td>
+			<td>----------------------------</td>
+			<td>----------------------------</td>
+			<td>----------------------------</td>
+			<td>----------------------------</td>
+		</tr>
+		{% for entry in session.asset_table %}
+		<tr>
+			<td>{{ entry.asset_tag }}</td>
+			<td>{{ entry.description }}</td>
+			<td>{{ entry.common_name }}</td>
+			<td>{{ entry.arrival }}</td>
+			<td>{{ entry.status }}</td>
+			<td>{{ entry.disposal }}</td>
+		</tr>
+		{% endfor %}	
+	</table>
+	<br>
+	<br>
 	<p>To add a new asset, enter the asset's tag and description below:</p>
-
 		<form action="{{url_for('add_asset')}}" method="POST">
 			Tag:         <input type="text" name="tag"  />
 			Description: <input type="text" name="desc" />
+			Facility:
 			<select name="faci">
-				{% for each facility in session.facilities %}
-				<option value= "{{facility}}_name">{{facility}}</option>
+				{% for facility in session.facility_dropdown %}
+				<option value= "{{facility}}">{{facility}}</option>
 				{% endfor %}
 			</select>
 			Date of Arrival (mm/dd/yyyy): <input type="text" name="date" />
-			<input type="submit" value="Create user!"/>
+			<input type="submit" value="Add Asset!"/>
 		</form>
+	<br>
+	<br>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form> &nbsp;
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log Out" />
+		</form> &nbsp;
 	</body>
 </html>

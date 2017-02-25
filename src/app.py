@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from config import dbname, dbhost, dbport
-import psycopg2, sys, json
+import psycopg2, sys, json, datetime
 
 app = Flask(__name__)
 conn = psycopg2.connect(dbname=dbname, host=dbhost, port=dbport)
 cur  = conn.cursor()
 
 app.secret_key = "onsapwhoderp?"
+
+#session['role'] = ""
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -26,7 +28,6 @@ def login():
 	
 	return redirect(url_for('error'))
 
-#session['db'] = dbname
 
 def valid_login(_username, _password):
 	cur.execute("SELECT username, password FROM users WHERE username=%s", (_username,))
@@ -36,7 +37,7 @@ def valid_login(_username, _password):
 		if (login_data[0]==_username and login_data[1]==_password):
 			return True
 	return False
-
+""""""
 @app.route('/create_user', methods=['GET','POST'])
 def create_user():
 	if request.method=='GET':
@@ -50,7 +51,7 @@ def create_user():
 			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
 			conn.commit()
 			session['user'] = usern
-			session['role'] = form_role
+			#session['role'] = form_role
 			return redirect(url_for('success'))
 
 	session['user'] = ""
@@ -65,6 +66,9 @@ def valid_input(_username, _password):
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
+	cur.execute("SELECT role FROM users WHERE username=%s", (session['user'],))
+	user_role = cur.fetchone()[0]
+	session['role'] = user_role
 	return render_template('dashboard.html')
 
 """"""	
@@ -104,12 +108,17 @@ def valid_facility(name, code):
 def add_asset():
 	if request.method=='GET':
 		# Ready the data to load the assets table
-		sql = "SELECT asset_tag, description, status FROM assets"
+		sql = """SELECT asset_tag, description, common_name, arrival, status, disposal 
+FROM assets a
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+"""
 		cur.execute(sql)
 		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
 		asset_table = []   # this is the processed result I'll stick in the session (or pass to the template)
 		for r in res:
-			asset_table.append( dict(zip(('asset_tag', 'description', 'status'), r)) )
+			asset_table.append( dict(zip(('asset_tag', 'description', 'common_name', 'arrival', 'status', 'disposal'), r)) )
+		print(asset_table)
 		session['asset_table'] = asset_table
 		
 		# Ready the data for the facillities drop-down
@@ -118,61 +127,97 @@ def add_asset():
 		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
 		facility_list = []   # this is the processed result I'll stick in the session (or pass to the template)
 		for r in res:
-			facility_list.append( dict(zip(('common_name'), r)) )
+			facility_list.append(r[0])
 		session['facility_dropdown'] = facility_list
 		return render_template('add_asset.html')
 
 	if request.method=='POST':
-		tag  = request.form['tag']
-		desc = request.form['desc']
+		tag       = request.form['tag']
+		desc      = request.form['desc']
+		facility  = request.form['faci']
+		form_date = request.form['date']
+		if not valid_date(form_date):
+			return redirect(url_for('af_error'))
+		timestamp = datetime.datetime.strptime(form_date, '%m/%d/%Y')
 		stat = "Present"
-		#if valid_input(usern, passw):	
-		cur.execute("INSERT INTO assets (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
-		conn.commit()
-		return redirect(url_for('add_asset'))
+		if valid_asset_add(tag):	
+				cur.execute("INSERT INTO assets (asset_tag, description, status) VALUES (%s, %s, %s)", (tag,desc,stat,))
+				conn.commit()
+				cur.execute("SELECT asset_pk FROM assets WHERE asset_tag=%s", (tag,))
+				asset_key = cur.fetchone()
+				#print(facility)
+				cur.execute("SELECT facility_pk FROM facilities WHERE common_name=%s", (facility,))
+				facility_key = cur.fetchone()
+				#print(facility_key)
+				cur.execute("INSERT INTO asset_at (asset_fk, facility_fk, arrival) VALUES (%s, %s, %s)", (asset_key,facility_key,timestamp,))
+				conn.commit()
+				
+				return redirect(url_for('add_asset'))
 
-	session['user'] = ""
-	return redirect(url_for('error'))
+	return redirect(url_for('af_error'))
 
-def valid_asset_add(_username, _password):
-	cur.execute("SELECT username, password FROM users WHERE username=%s", (_username,))
-	login_data = cur.fetchone()
-	print(login_data)
-	if login_data!=None:
-		if (login_data[0]==_username and login_data[1]==_password):
-			return True
-	return False
+def valid_asset_add(_tag):
+	cur.execute("SELECT asset_tag FROM assets WHERE asset_tag=%s", (_tag,))
+	asset_data = cur.fetchone()
+	#print(asset_data)
+	if asset_data:
+		return False
+	return True
+
+
+def valid_date(_date):
+	try:
+		datetime.datetime.strptime(_date, '%m/%d/%Y')
+	except ValueError:
+		return False
+	return True
+	
 """"""
 @app.route('/dispose_asset', methods=['GET','POST'])
 def dispose_asset():
 	if request.method=='GET':
-		if session['role']== "Logistics Officer":: 
+		print("printing role: " + session['role'])
+		if session['role']=="Logistics Officer": 
 			return render_template('dispose_asset.html')
 
 	if request.method=='POST':
 		form_tag  =  request.form['tag']
 		form_date = request.form['disp']
-		if valid_disposal(form_tag, form_date):	
-			#cur.execute("UPDATE users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
-			#conn.commit()
-			return redirect(url_for('dispose_asset'))
+		if not valid_date(form_date):
+			return redirect(url_for('af_error'))
+		timestamp = datetime.datetime.strptime(form_date, '%m/%d/%Y')
+		if valid_disposal(form_tag, timestamp):	
+			cur.execute("UPDATE assets SET status='Disposed' WHERE asset_tag=%s", (form_tag,))
+			conn.commit()
+			#need selection here
+			sql = """SELECT asset_pk
+FROM assets a
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+WHERE asset_tag=%s
+"""
+			cur.execute(sql, (form_tag,))
+			asset_key = cur.fetchone()
+			print(asset_key)
+			cur.execute("UPDATE asset_at SET disposal=%s WHERE asset_fk=%s", (timestamp,asset_key,))
+			conn.commit()
+			return redirect(url_for('dashboard'))
 
-	return redirect(url_for('error'))
+	return redirect(url_for('af_error'))
 
-def valid_dispose(tag, date):
+def valid_disposal(tag, date):
 	sql = """SELECT asset_tag
 FROM assets a
-JOIN asset_at aa on a.asset_pk=aa.asset_fk
-JOIN facilities f on aa.facility_fk=f.facility_pk
-WHERE (asset_tag=%s AND 
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+WHERE (asset_tag=%s AND arrival<=%s AND status='Present') 
 """
-	tag_and_date =((),)
-	cur.execute("SELECT asset_tag FROM asset_at WHERE (asset_tag=%s AND ", (_username,))
-	login_data = cur.fetchone()
-	print(login_data)
-	if login_data!=None:
-		if (login_data[0]==_username and login_data[1]==_password):
-			return True
+	tag_and_date =(tag, date,)
+	cur.execute(sql, tag_and_date)
+	dispose_data = cur.fetchone()
+	print(dispose_data)
+	if dispose_data:
+		return True
 	return False
 """"""
 @app.route('/asset_report', methods=['GET','POST'])
@@ -190,7 +235,6 @@ def asset_report():
 			session['user'] = usern
 			return redirect(url_for('success'))
 
-	session['user'] = ""
 	return redirect(url_for('error'))
 """"""
 
