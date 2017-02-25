@@ -1,21 +1,17 @@
 <html>
-	<head><title>Create a new account</title></head>
-	<body><h1>Sign up here!</h1>
-	<p>To create a new user, enter your desired username and password below (maximum 16 characters each):</p>
-		@{   
-    var db = Database.Open("{{session['db']}}");
-    var selectCommand = "SELECT  FROM Employees";
-    var selectedData = db.Query(selectCommand); 
-}
+	<head><title>Add Asset</title></head>
+	<body><h1>Add a new asset here!</h1>
+	<p>To add a new asset, enter the asset's tag and description below:</p>
 
-		<form action="{{url_for('create_user')}}" method="POST">
-			Username: <input type="text" name="user" />
-			Password: <input type="text" name="pass" />
-			I am a: 
-			<select name="role">
-				<option value= "Logistics Officer"> Logistics Officer</option>
-				<option value="Facilities Officer">Facilities Officer</option>
+		<form action="{{url_for('add_asset')}}" method="POST">
+			Tag:         <input type="text" name="tag"  />
+			Description: <input type="text" name="desc" />
+			<select name="faci">
+				{% for each facility in session.facilities %}
+				<option value= "{{facility}}_name">{{facility}}</option>
+				{% endfor %}
 			</select>
+			Date of Arrival (mm/dd/yyyy): <input type="text" name="date" />
 			<input type="submit" value="Create user!"/>
 		</form>
 	</body>

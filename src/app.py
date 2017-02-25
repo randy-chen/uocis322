@@ -12,6 +12,8 @@ app.secret_key = "onsapwhoderp?"
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if request.method=='GET':
+		session['user'] = ""
+		session['role'] = ""
 		return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 	
 	if request.method=='POST':
@@ -26,6 +28,15 @@ def login():
 
 #session['db'] = dbname
 
+def valid_login(_username, _password):
+	cur.execute("SELECT username, password FROM users WHERE username=%s", (_username,))
+	login_data = cur.fetchone()
+	#print(login_data)
+	if login_data!=None:
+		if (login_data[0]==_username and login_data[1]==_password):
+			return True
+	return False
+
 @app.route('/create_user', methods=['GET','POST'])
 def create_user():
 	if request.method=='GET':
@@ -39,15 +50,12 @@ def create_user():
 			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
 			conn.commit()
 			session['user'] = usern
+			session['role'] = form_role
 			return redirect(url_for('success'))
 
 	session['user'] = ""
 	return redirect(url_for('error'))
 	
-@app.route('/dashboard', methods=['GET'])
-def dashboard():
-	return render_template('dashboard.html')
-
 def valid_input(_username, _password):
 	cur.execute("SELECT username FROM users WHERE username=%s", (_username,))
 	existing_name = cur.fetchone()
@@ -55,7 +63,78 @@ def valid_input(_username, _password):
 		return False
 	return True
 
-def valid_login(_username, _password):
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+	return render_template('dashboard.html')
+
+""""""	
+@app.route('/add_facility', methods=['GET','POST'])
+def add_facility():
+	if request.method=='GET':
+		sql = "SELECT common_name, fcode, location FROM facilities"
+		cur.execute(sql)
+		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+		facility_list = []   # this is the processed result I'll stick in the session (or pass to the template)
+		for r in res:
+			facility_list.append( dict(zip(('common_name', 'fcode', 'location'), r)) )
+		session['facilities'] = facility_list
+		return render_template('facility.html')
+
+	if request.method=='POST':
+		form_name = request.form['fname']
+		form_code = request.form['fcode']
+		form_loca = request.form['floca']
+		if valid_facility(form_name,form_code):	
+			cur.execute("INSERT INTO facilities (common_name, fcode, location) VALUES (%s, %s, %s)", (form_name,form_code,form_loca,))
+			conn.commit()
+			return redirect(url_for('add_facility'))
+
+	return redirect(url_for('af_error'))
+
+
+def valid_facility(name, code):
+	cur.execute("SELECT common_name, fcode FROM facilities WHERE (common_name=%s OR fcode=%s)", (name,code,))
+	facility_data = cur.fetchone()
+	#print(facility_data)
+	if (facility_data or len(name)>32 or len(code)>6 or len(name)==0 or len(code)==0):
+		return False
+	return True
+""""""
+@app.route('/add_asset', methods=['GET','POST'])
+def add_asset():
+	if request.method=='GET':
+		# Ready the data to load the assets table
+		sql = "SELECT asset_tag, description, status FROM assets"
+		cur.execute(sql)
+		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+		asset_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+		for r in res:
+			asset_table.append( dict(zip(('asset_tag', 'description', 'status'), r)) )
+		session['asset_table'] = asset_table
+		
+		# Ready the data for the facillities drop-down
+		sql = "SELECT common_name FROM facilities"
+		cur.execute(sql)
+		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+		facility_list = []   # this is the processed result I'll stick in the session (or pass to the template)
+		for r in res:
+			facility_list.append( dict(zip(('common_name'), r)) )
+		session['facility_dropdown'] = facility_list
+		return render_template('add_asset.html')
+
+	if request.method=='POST':
+		tag  = request.form['tag']
+		desc = request.form['desc']
+		stat = "Present"
+		#if valid_input(usern, passw):	
+		cur.execute("INSERT INTO assets (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
+		conn.commit()
+		return redirect(url_for('add_asset'))
+
+	session['user'] = ""
+	return redirect(url_for('error'))
+
+def valid_asset_add(_username, _password):
 	cur.execute("SELECT username, password FROM users WHERE username=%s", (_username,))
 	login_data = cur.fetchone()
 	print(login_data)
@@ -63,32 +142,41 @@ def valid_login(_username, _password):
 		if (login_data[0]==_username and login_data[1]==_password):
 			return True
 	return False
-	
-@app.route('/add_facility', methods=['GET','POST'])
-def add_facility():
+""""""
+@app.route('/dispose_asset', methods=['GET','POST'])
+def dispose_asset():
 	if request.method=='GET':
-		sql = "SELECT common_name, fcode, location FROM facilities"
-		cur.execute(sql)
-		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
-		processed_data = []   # this is the processed result I'll stick in the session (or pass to the template)
-		for r in res:
-			processed_data.append( dict(zip(('common_name', 'fcode', 'location'), r)) )
-		session['facilities'] = processed_data
-		return render_template('facility.html')
+		if session['role']== "Logistics Officer":: 
+			return render_template('dispose_asset.html')
 
 	if request.method=='POST':
-		form_name = request.form['fname']
-		form_code = request.form['fcode']
-		form_loca = request.form['floca']
-		#if valid_facility(form_name,form_code):	
-		cur.execute("INSERT INTO facilities (common_name, fcode, location) VALUES (%s, %s, %s)", (form_name,form_code,form_loca,))
-		conn.commit()
-		return redirect(url_for('add_facility'))
+		form_tag  =  request.form['tag']
+		form_date = request.form['disp']
+		if valid_disposal(form_tag, form_date):	
+			#cur.execute("UPDATE users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
+			#conn.commit()
+			return redirect(url_for('dispose_asset'))
 
-	return redirect(url_for('af_error'))
+	return redirect(url_for('error'))
+
+def valid_dispose(tag, date):
+	sql = """SELECT asset_tag
+FROM assets a
+JOIN asset_at aa on a.asset_pk=aa.asset_fk
+JOIN facilities f on aa.facility_fk=f.facility_pk
+WHERE (asset_tag=%s AND 
 """
-@app.route('/create_user', methods=['GET','POST'])
-def create_user():
+	tag_and_date =((),)
+	cur.execute("SELECT asset_tag FROM asset_at WHERE (asset_tag=%s AND ", (_username,))
+	login_data = cur.fetchone()
+	print(login_data)
+	if login_data!=None:
+		if (login_data[0]==_username and login_data[1]==_password):
+			return True
+	return False
+""""""
+@app.route('/asset_report', methods=['GET','POST'])
+def asset_report():
 	if request.method=='GET':
 		return render_template('create_user.html')
 
@@ -104,25 +192,8 @@ def create_user():
 
 	session['user'] = ""
 	return redirect(url_for('error'))
+""""""
 
-@app.route('/create_user', methods=['GET','POST'])
-def create_user():
-	if request.method=='GET':
-		return render_template('create_user.html')
-
-	if request.method=='POST':
-		usern     = request.form['user']
-		passw     = request.form['pass']
-		form_role = request.form['role']
-		if valid_input(usern, passw):	
-			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
-			conn.commit()
-			session['user'] = usern
-			return redirect(url_for('success'))
-
-	session['user'] = ""
-	return redirect(url_for('error'))
-"""
 @app.route('/success')
 def success():
 	return render_template('success.html') 

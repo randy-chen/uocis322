@@ -29,10 +29,10 @@ CREATE TABLE facilities (
 );
 
 CREATE TABLE asset_history (
-	asset_fk         integer references assets(asset_pk) not null,
+	asset_fk         integer references assets(asset_pk),
 	facility_fk      integer references facilities(facility_pk),
-	arrive_dt        timestamp, 
-	depart_dt        timestamp
+	arrival          timestamp, 
+	disposal         timestamp
 );
 
 /* The tables created by the statements below will be used for a future assignment. */

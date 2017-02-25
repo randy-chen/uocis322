@@ -2,6 +2,18 @@
 	<head><title>Dashboard</title></head>
 	<body><h1>Hi, {{session['user']}} :)</h1>
 	<p></p>
+		<form action="{{url_for('add_facility')}}" method="GET">
+			Got a new facility? <input type="submit" value="Add Facility" />
+		</form>
+	<br>
+		<form action="{{url_for('add_asset')}}" method="GET">
+			Have new assets you'd like to add? <input type="submit" value="Add Asset" />
+		</form>
+	<br>
+		<form action="{{url_for('login')}}" method="GET">
+			Looking to get rid of an asset? <input type="submit" value="Dispose Asset" />
+		</form>
+	<br>
 		<form action="{{url_for('login')}}" method="GET">
 			<input type="submit" value="Log out" />
 		</form>

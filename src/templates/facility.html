@@ -4,15 +4,14 @@
 	<p>Here are the facilities in the current database:</p>
 	<table>
 		<tr>
-			<td>| Facility &nbsp; &nbsp; &nbsp;|</td>
-			<td>&nbsp; Fcode  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|</td>
-			<td>&nbsp; Location  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|</td>
+			<td>| &nbsp; Facility &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;|</td>
+			<td>&nbsp; Fcode  &nbsp; &nbsp; &nbsp;|</td>
+			<td>&nbsp; Location  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
 		</tr>
 		<tr>
-			<td>--------------+</td>
-			<td>--------------------+</td>
-			<td>----------------------------+</td>
-			<td>-----------------------------</td>
+			<td>--------------------------------------+</td>
+			<td>-------------+</td>
+			<td>----------------------------</td>
 		</tr>
 		{% for entry in session.facilities %}
 		<tr>
