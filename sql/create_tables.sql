@@ -1,5 +1,6 @@
 
-/*  Need more comments about the tables
+/*  Since there aren't that many roles, they can be easilty kept track of as part of the users table.
+	also makes role selection when creating a new user easier to implement.
 */
 
 /*  Added a numeric primary key as usernames can have a mix of letters and numbers, 
@@ -28,7 +29,7 @@ CREATE TABLE facilities (
 	location         text
 );
 /* Really, this table is more like 'asset history'. It keeps track of where an asset has been as well
-   when it arrived and was disposed.
+   when it arrived and was disposed. This table allows us to map assets to facilities with foreign keys.
 */
 CREATE TABLE asset_at (
 	asset_fk         integer references assets(asset_pk),
