@@ -1,0 +1,22 @@
+<html>
+	<head><title>Asset Report</title></head>
+	<body><h1>Filter Reports Here!</h1>
+	<p>To create a new user, enter your desired username and password below (maximum 16 characters each):</p>
+		<form action="{{url_for('create_user')}}" method="POST">
+			<select name="faci">	
+				<option value= ""></option>
+				{% for facility in session.facility_dropdown %}
+				<option value= "{{facility}}">{{facility}}</option>
+				{% endfor %}
+			</select>
+			Username: <input type="text" name="user" />
+			Password: <input type="text" name="pass" />
+			I am a: 
+			<select name="role">
+				<option value= "Logistics Officer"> Logistics Officer</option>
+				<option value="Facilities Officer">Facilities Officer</option>
+			</select>
+			<input type="submit" value="Create user!"/>
+		</form>
+	</body>
+</html>

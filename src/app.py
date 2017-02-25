@@ -223,7 +223,15 @@ WHERE (asset_tag=%s AND arrival<=%s AND status='Present')
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
 	if request.method=='GET':
-		return render_template('create_user.html')
+		# Ready the data for the facillities drop-down
+		sql = "SELECT common_name FROM facilities"
+		cur.execute(sql)
+		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+		facility_list = []   # this is the processed result I'll stick in the session (or pass to the template)
+		for r in res:
+			facility_list.append(r[0])
+		session['facility_dropdown'] = facility_list
+		return render_template('asset_report.html')
 
 	if request.method=='POST':
 		usern     = request.form['user']
