@@ -1,3 +1,9 @@
+# Randy Chen, CIS 322 W'17.
+#
+# This is my own work. Though I would like to acknowledge:
+#
+# Andrew Hampton for his help on using jinja2 to generate and display tables on the webpage.
+
 from flask import Flask, render_template, request, session, redirect, url_for
 from config import dbname, dbhost, dbport
 import psycopg2, sys, json, datetime
@@ -8,12 +14,12 @@ cur  = conn.cursor()
 
 app.secret_key = "onsapwhoderp?"
 
-#session['role'] = ""
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if request.method=='GET':
+		session['asset_table'] = []
 		session['user'] = ""
 		session['role'] = ""
 		return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
@@ -66,6 +72,7 @@ def valid_input(_username, _password):
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
+	session['asset_table'] = []
 	cur.execute("SELECT role FROM users WHERE username=%s", (session['user'],))
 	user_role = cur.fetchone()[0]
 	session['role'] = user_role
@@ -160,7 +167,7 @@ def valid_asset_add(_tag):
 	cur.execute("SELECT asset_tag FROM assets WHERE asset_tag=%s", (_tag,))
 	asset_data = cur.fetchone()
 	#print(asset_data)
-	if asset_data:
+	if asset_data or len(_tag)>16 or len(_tag)==0:
 		return False
 	return True
 
@@ -206,6 +213,8 @@ WHERE asset_tag=%s
 	return redirect(url_for('af_error'))
 
 def valid_disposal(tag, date):
+	if len(tag)>16 or len(tag)==0:
+		return False
 	sql = """SELECT asset_tag
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
@@ -231,19 +240,42 @@ def asset_report():
 		for r in res:
 			facility_list.append(r[0])
 		session['facility_dropdown'] = facility_list
+
 		return render_template('asset_report.html')
 
 	if request.method=='POST':
-		usern     = request.form['user']
-		passw     = request.form['pass']
-		form_role = request.form['role']
-		if valid_input(usern, passw):	
-			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
-			conn.commit()
-			session['user'] = usern
-			return redirect(url_for('success'))
+		facil     = request.form['r_faci']
+		rdate     = request.form['r_date']
+		if not valid_date(rdate):
+			return redirect(url_for('af_error'))
+		timestamp = datetime.datetime.strptime(rdate, '%m/%d/%Y')
+		if facil == "":
+			sql = """SELECT asset_tag, description, common_name, arrival, status, disposal 
+FROM assets a
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+WHERE (arrival<=%s AND (status='Present' OR disposal>%s)) 
+"""
+			exe = (rdate,rdate,)
+			cur.execute(sql,exe)
+		else:
+			sql = """SELECT asset_tag, description, common_name, arrival, status, disposal 
+FROM assets a
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+WHERE (arrival<=%s AND (status='Present' OR disposal>%s) AND common_name=%s) 
+"""
+			exe = (rdate,rdate,facil,)
+			cur.execute(sql,exe)
+		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+		asset_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+		for r in res:
+			asset_table.append( dict(zip(('asset_tag', 'description', 'common_name', 'arrival', 'status', 'disposal'), r)) )
+		session['asset_table'] = asset_table
+			
+		return redirect(url_for('asset_report'))
 
-	return redirect(url_for('error'))
+	return redirect(url_for('af_error'))
 """"""
 
 @app.route('/success')

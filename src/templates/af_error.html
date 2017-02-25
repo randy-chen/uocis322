@@ -13,14 +13,28 @@
 	<p>&lt;&gt; The asset tag must not exceed its 16 character limit and be at least 1 character long.</p>
 	<p>&lt;&gt; The asset tag you are trying to add must not match a tag that is already in the database.</p>
 	<p>&lt;&gt; The asset tag must not be of an asset which has already been disposed of.</p>
+	<p>&lt;&gt; Be sure the date entered was in the accepted format (mm/dd/yyyy).</p>
 		<form action="{{url_for('add_asset')}}" method="GET">
 			<input type="submit" value="Return to Asset Add" />
 		</form>
 
 	<p>If you got here from trying to dispose of an asset:</p>
+	<p>&lt;&gt; The asset tag must not exceed its 16 character limit and be at least 1 character long.</p>
 	<p>&lt;&gt; Be sure that the asset exists and has yet to be disposed of.</p>
 	<p>&lt;&gt; Check that you are not disposing an asset before its date of arrival (OSNAP does not condone time travel).</p>
-	<p>&lt;&gt; You have clearance to dispose assets (you are a Logistics Officer).</p>
+	<p>&lt;&gt; Be sure the date entered was in the accepted format (mm/dd/yyyy).</p>
+	<p>&lt;&gt; You must have clearance to dispose assets (you must be a Logistics Officer).</p>
+		<form action="{{url_for('dispose_asset')}}" method="GET">
+			<input type="submit" value="Return to Asset Disposal" />
+		</form>
+
+	<p>If you got here from trying to get a report on assets:</p>
+	<p>&lt;&gt; Be sure the date entered was in the accepted format (mm/dd/yyyy).</p>
+		<form action="{{url_for('asset_report')}}" method="GET">
+			<input type="submit" value="Return to Asset Report" />
+		</form>
+
+	<br>
 		<form action="{{url_for('dashboard')}}" method="GET">
 			<input type="submit" value="Return to Dashboard" />
 		</form> &nbsp;

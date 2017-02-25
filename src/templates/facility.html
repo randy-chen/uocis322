@@ -1,7 +1,7 @@
 <html>
 	<head><title>New Facility</title></head>
 	<body><h1>Add a facility here!</h1>
-	<p>Here are the facilities in the current database:</p>
+	<p>Here are the facilities currently in the database:</p>
 	<table>
 		<tr>
 			<td>| &nbsp; Facility &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;|</td>
@@ -28,6 +28,13 @@
 			Facility Fcode: <input type="text" name="fcode" />
 			Location (optional): <input type="text" name="floca" /> 
 			<input type="submit" value="Add Facility"/>
+		</form>
+	<br>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form>
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log out" />
 		</form>
 	</body>
 </html>

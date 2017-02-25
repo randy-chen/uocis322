@@ -3,21 +3,22 @@
 	<body><h1>Add a new asset here!</h1>
 	<table>
 		<tr>
-			<td>| &nbsp; Asset Tag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;|</td>
-			<td>&nbsp; Desciption  &nbsp; &nbsp; &nbsp;|</td>
-			<td>&nbsp; Facility &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
-			<td>&nbsp; Date of Arrival  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
-			<td>&nbsp; Status  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
-			<td>&nbsp; Date Expunged  &nbsp; &nbsp;</td>
+			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Desciption  &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Facility &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Date of Arrival  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Status  &nbsp; &nbsp; </td>
+			<td>|&nbsp; Date Expunged  &nbsp; &nbsp;</td>
 		</tr>
 		<tr>
-			<td>--------------------------------------+</td>
-			<td>-------------+</td>
-			<td>----------------------------</td>
-			<td>----------------------------</td>
-			<td>----------------------------</td>
-			<td>----------------------------</td>
+			<td>-------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>--------------------------------</td>
+			<td>---------------</td>
+			<td>--------------------------------</td>
 		</tr>
+
 		{% for entry in session.asset_table %}
 		<tr>
 			<td>{{ entry.asset_tag }}</td>
