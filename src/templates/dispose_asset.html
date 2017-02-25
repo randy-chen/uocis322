@@ -1,12 +1,18 @@
 <html>
 	<head><title>Dispose Asset</title></head>
 	<body><h1>Expunge an asset here!</h1>
-	<p>To dispose of an asset, enter the asset's tag and dat of disposal below:</p>
+	<p>To dispose of an asset, enter the asset's tag and date of disposal below:</p>
 
 		<form action="{{url_for('dispose_asset')}}" method="POST">
 			Asset Tag:     <input type="text" name="tag"  />
 			Disposal Date: <input type="text" name="disp" />
 			<input type="submit" value="Dispose Asset!"/>
 		</form>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form> &nbsp;
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log Out" />
+		</form> &nbsp;
 	</body>
 </html>

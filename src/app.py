@@ -125,7 +125,7 @@ JOIN facilities f ON aa.facility_fk=f.facility_pk
 		asset_table = []   # this is the processed result I'll stick in the session (or pass to the template)
 		for r in res:
 			asset_table.append( dict(zip(('asset_tag', 'description', 'common_name', 'arrival', 'status', 'disposal'), r)) )
-		print(asset_table)
+		#print(asset_table)
 		session['asset_table'] = asset_table
 		
 		# Ready the data for the facillities drop-down
@@ -183,7 +183,7 @@ def valid_date(_date):
 @app.route('/dispose_asset', methods=['GET','POST'])
 def dispose_asset():
 	if request.method=='GET':
-		print("printing role: " + session['role'])
+		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
 			return render_template('dispose_asset.html')
 
@@ -205,7 +205,7 @@ WHERE asset_tag=%s
 """
 			cur.execute(sql, (form_tag,))
 			asset_key = cur.fetchone()
-			print(asset_key)
+			#print(asset_key)
 			cur.execute("UPDATE asset_at SET disposal=%s WHERE asset_fk=%s", (timestamp,asset_key,))
 			conn.commit()
 			return redirect(url_for('dashboard'))
@@ -219,12 +219,12 @@ def valid_disposal(tag, date):
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
 JOIN facilities f ON aa.facility_fk=f.facility_pk
-WHERE (asset_tag=%s AND arrival<=%s AND status='Present') 
+WHERE (asset_tag=%s AND arrival<%s AND status='Present') 
 """
 	tag_and_date =(tag, date,)
 	cur.execute(sql, tag_and_date)
 	dispose_data = cur.fetchone()
-	print(dispose_data)
+	#print(dispose_data)
 	if dispose_data:
 		return True
 	return False
