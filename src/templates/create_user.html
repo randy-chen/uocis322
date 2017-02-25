@@ -5,6 +5,11 @@
 		<form action="{{url_for('create_user')}}" method="POST">
 			Username: <input type="text" name="user" />
 			Password: <input type="text" name="pass" />
+			I am a: 
+			<select name="role">
+				<option value= "Logistics Officer"> Logistics Officer</option>
+				<option value="Facilities Officer">Facilities Officer</option>
+			</select>
 			<input type="submit" value="Create user!"/>
 		</form>
 	</body>

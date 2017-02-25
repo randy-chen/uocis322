@@ -31,10 +31,11 @@ def create_user():
 		return render_template('create_user.html')
 
 	if request.method=='POST':
-		usern = request.form['user']
-		passw = request.form['pass']
+		usern     = request.form['user']
+		passw     = request.form['pass']
+		form_role = request.form['role']
 		if valid_input(usern, passw):	
-			cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (usern,passw,))
+			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
 			conn.commit()
 			session['user'] = usern
 			return redirect(url_for('success'))
