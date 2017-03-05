@@ -1,0 +1,12 @@
+<html>
+	<head><title>Transfer Requested</title></head>
+	<body><h1>Asset Transfer Successfully Requested!</h1>
+	<p>Your request now awaits approval from a Facilities Officer!</p>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form>
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log out" />
+		</form>
+	</body>
+</html>

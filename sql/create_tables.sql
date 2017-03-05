@@ -38,5 +38,22 @@ CREATE TABLE asset_at (
 	disposal         timestamp
 );
 
-/* The tables created by the statements below will be used for a future assignment. */
-CREATE TABLE in_transit ();
+/* I decided to use one big table to handle all the information of a transfer request and 
+   times in transit and the load times and unload times. It seemed unnecessary to have 
+   separate tables keep track of an asset in motion and the requests behind putting that 
+   asset in motion.	This way all information is easily visible in one table, letting 
+   the user track transfer requests as well as transit.
+ */
+CREATE TABLE transfers (
+	req_id           serial primary key,
+	requester        varchar(16),
+	tf_asset         varchar(16),
+	req_dt           timestamp,
+	src_fac          varchar(6),
+	load_dt          timestamp,
+	tf_status        text,
+	des_fac          varchar(6),
+	unload_dt        timestamp,
+	approver         varchar(16),
+	aprv_dt          timestamp
+);

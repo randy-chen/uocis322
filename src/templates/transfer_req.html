@@ -1,0 +1,66 @@
+<html>
+	<head><title>Request Transfer</title></head>
+	<body><h1>Request to transfer an asset here!</h1>
+	<br>
+	<p>To transfer an asset, select the tag and the source and destination facilities below:</p>
+		<form action="{{url_for('transfer_req')}}" method="POST">
+			Asset Tag:
+			<select name="tag">
+				{% for asset in session.present_asset_dropdown %}
+				<option value= "{{asset}}">{{asset}}</option>
+				{% endfor %}
+			</select>
+			Source Facility:
+			<select name="src">
+				{% for facility in session.facility_dropdown %}
+				<option value= "{{facility}}">{{facility}}</option>
+				{% endfor %}
+			</select>
+			Destination Facility:
+			<select name="dest">
+				{% for facility in session.facility_dropdown %}
+				<option value= "{{facility}}">{{facility}}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" value="Request Transfer!"/>
+		</form>
+	<br>
+	<table>
+		<tr>
+			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Desciption  &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Facility &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Date of Arrival  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Status  &nbsp; &nbsp; </td>
+			<td>|&nbsp; Date Expunged  &nbsp; &nbsp;</td>
+		</tr>
+		<tr>
+			<td>-------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>--------------------------------</td>
+			<td>---------------</td>
+			<td>--------------------------------</td>
+		</tr>
+
+		{% for entry in session.asset_table %}
+		<tr>
+			<td>{{ entry.asset_tag }}</td>
+			<td>{{ entry.description }}</td>
+			<td>{{ entry.common_name }}</td>
+			<td>{{ entry.arrival }}</td>
+			<td>{{ entry.status }}</td>
+			<td>{{ entry.disposal }}</td>
+		</tr>
+		{% endfor %}	
+	</table>
+	<br>
+	<br>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form> &nbsp;
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log Out" />
+		</form> &nbsp;
+	</body>
+</html>

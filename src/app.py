@@ -196,7 +196,6 @@ def dispose_asset():
 		if valid_disposal(form_tag, timestamp):	
 			cur.execute("UPDATE assets SET status='Disposed' WHERE asset_tag=%s", (form_tag,))
 			conn.commit()
-			#need selection here
 			sql = """SELECT asset_pk
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
@@ -277,10 +276,167 @@ WHERE (arrival<=%s AND (status='Present' OR disposal>%s) AND common_name=%s)
 
 	return redirect(url_for('af_error'))
 """"""
+@app.route('/transfer_req', methods=['GET','POST'])
+def transfer_req():
+	if request.method=='GET':
+		#print("printing role: " + session['role'])
+		if session['role']=="Logistics Officer": 
+			# Ready the data for the present assets drop-down
+			sql = "SELECT asset_tag FROM assets where status='Present'"
+			cur.execute(sql)
+			res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+			present_asset_list = []   # this is the processed result I'll stick in the session (or pass to the template)
+			for r in res:
+				present_asset_list.append(r[0])
+			session['present_asset_dropdown'] = present_asset_list
+			
+			# Ready the data for the facillities drop-down
+			sql = "SELECT common_name FROM facilities"
+			cur.execute(sql)
+			res1 = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+			facility_list = []   # this is the processed result I'll stick in the session (or pass to the template)
+			for r in res1:
+				facility_list.append(r[0])
+			session['facility_dropdown'] = facility_list
+
+			return render_template('transfer_req.html')
+
+	if request.method=='POST':
+		asset    = request.form['tag']
+		source   = request.form['src']
+		dest     = request.form['dest']
+		if (source==dest):
+			return redirect(url_for('af_error'))
+
+		cur.execute("INSERT INTO transfers (requester, tf_asset, src_fac, tf_status, des_fac) VALUES (%s, %s, %s, %s, %s)", (session['user'],asset,source,'Pending',dest,))
+		conn.commit()#Need to track the date of the request<><><><><>
+		'''
+		cur.execute("SELECT asset_pk FROM assets WHERE asset_tag=%s", (tag,))
+		asset_key = cur.fetchone()
+		#print(facility)
+		cur.execute("SELECT facility_pk FROM facilities WHERE common_name=%s", (facility,))
+		facility_key = cur.fetchone()
+		#print(facility_key)
+		cur.execute("INSERT INTO asset_at (asset_fk, facility_fk, arrival) VALUES (%s, %s, %s)", (asset_key,facility_key,timestamp,))
+		conn.commit()
+		'''
+		return redirect(url_for('req_success'))
+			
+	return redirect(url_for('af_error'))
+""""""
+@app.route('/approve_req', methods=['GET','POST'])
+def approve_req():
+	if request.method=='GET':
+		request.form['aprv'] = None
+		request.form['rjct'] = None
+		#print("printing role: " + session['role'])
+		if session['role']=="Facilities Officer": 
+			# Ready the data to load the requests table
+			sql = """SELECT req_id, requester, tf_asset, src_fac, des_fac 
+FROM transfers
+"""
+			# <><><><><><><>still need to include the time that the request was made on <><><><><><><>
+			cur.execute(sql)
+			res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+			request_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+			for r in res:
+				request_table.append( dict(zip(('req_id','requester', 'tf_asset', 'src_fac', 'des_fac'), r)) )
+			#print(request_table)
+			session['request_table'] = request_table
+
+			return render_template('approve_req.html')
+
+	if request.method=='POST':
+		req_id = request.form['request']
+		# <><><> still need to keep track of the date that the request got approved.
+		if request.form['aprv']:
+			cur.execute("UPDATE transfers SET tf_status='Approved' WHERE req_id=%s", (req_id,))
+			conn.commit()
+			
+		if request.form['rjct']:
+			cur.execute("DELETE FROM transfers WHERE req_id=%s", (req_id,))
+			conn.commit()
+		
+		return redirect(url_for('dashboard'))
+
+
+	return redirect(url_for('af_error'))
+""""""
+@app.route('/update_transit', methods=['GET','POST'])
+def update_transit():
+	if request.method=='GET':
+		#print("printing role: " + session['role'])
+		if session['role']=="Logistics Officer": 
+			# Ready the data to load the requests table
+			sql = """SELECT req_id, requester, tf_asset, src_fac, des_fac 
+FROM transfers 
+WHERE (tf_status='Approved' 
+AND (unload_dt IS NULL OR unload_dt=''))
+"""
+			# <><><><><><><>still need to include the time that the request was made on <><><><><><><>
+			cur.execute(sql)
+			res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+			request_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+			for r in res:
+				request_table.append( dict(zip(('req_id','requester', 'tf_asset', 'src_fac', 'des_fac'), r)) )
+			#print(request_table)
+			session['request_table'] = request_table
+
+			return render_template('approve_req.html')
+
+	if request.method=='POST':
+		req_id  = request.form['request']
+		up_date = request.form['u_date']
+		if request.form['load']:
+			if valid_update(req_id, up_date):
+				timestamp = datetime.datetime.strptime(form_date, '%m/%d/%Y')
+				# need to handle different cases.
+				cur.execute("UPDATE transfers SET load_dt=%s WHERE req_id=%s", (req_id,))
+				conn.commit()
+			
+				return redirect(url_for('dashboard'))
+
+		if request.form['unload']:
+			cur.execute("UPDATE transfers SET unload_dt=%s WHERE req_id=%s", (req_id,))
+			conn.commit()
+
+		# only updates requests that have been approved.
+			return redirect(url_for('dashboard'))
+			
+		
+		return redirect(url_for('af_error'))
+
+
+	return redirect(url_for('af_error'))
+
+def valid_load(_request, _date):
+	sql = """SELECT load_dt, unload_dt
+FROM transfers
+FROM assets a
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+JOIN transfers t ON a.asset_tag=t.tf_asset
+WHERE (req_id=%s AND arrival<%s) 
+"""
+	req_and_date =(_request, _date,)
+	cur.execute(sql, tag_and_date)
+	update_data = cur.fetchone()
+	#print(dispose_data)
+	if dispose_data:
+		return True
+	return False
+		
+""""""
+""""""
+""""""
 
 @app.route('/success')
 def success():
 	return render_template('success.html') 
+
+@app.route('/req_success')
+def req_success():
+	return render_template('req_success.html') 
 
 @app.route('/error')
 def error():

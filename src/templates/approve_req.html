@@ -1,0 +1,53 @@
+<html>
+	<head><title>Manage Requests</title></head>
+	<body><h1>Accept and/or reject transfer requests here!</h1>
+	<p>Here are the requests awaiting your decision:</p>
+	<table>
+		<tr>
+			<td>|&nbsp; Request ID &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Requester  &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; From  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; To  &nbsp; &nbsp; </td>
+		</tr>
+		<tr>
+			<td>-------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>--------------------------------</td>
+			<td>---------------</td>
+		</tr>
+
+		{% for entry in session.request_table %}
+		<tr>
+			<td>{{ entry.req_id }}</td>
+			<td>{{ entry.requester }}</td>
+			<td>{{ entry.tf_asset }}</td>
+			<td>{{ entry.src_fac }}</td>
+			<td>{{ entry.des_fac }}</td>
+		</tr>
+		{% endfor %}	
+	</table>
+	<br>
+	<br>
+	<p>Select which request to approve or reject below: </p>
+		<form action="{{url_for('approve_req')}}" method="POST">
+			Request:
+			<select name="request">
+				{% for req_id in session.request_dropdown %}
+				<option value= "{{req_id}}">{{req_id}}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" value="Approve Requestt!" name="aprv" />
+			<input type="submit" value="Reject Request!"   name="rjct" />
+		</form>
+	<br>
+	<br>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form> &nbsp;
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log Out" />
+		</form> &nbsp;
+	</body>
+</html>

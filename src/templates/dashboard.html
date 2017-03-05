@@ -18,6 +18,14 @@
 			Want to know about assets on a certain date? <input type="submit" value="Asset Report" />
 		</form>
 	<br>
+		<form action="{{url_for('transfer_req')}}" method="GET">
+			Want to request a transfer? <input type="submit" value="Request Transfer" />
+		</form>
+	<br>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			Want to know about trasnfer requests made? <input type="submit" value="Transfer Report" />
+		</form>
+	<br>
 		<form action="{{url_for('login')}}" method="GET">
 			<input type="submit" value="Log out" />
 		</form>

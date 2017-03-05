@@ -1,0 +1,57 @@
+<html>
+	<head><title>Manage Transit</title></head>
+	<body><h1>Update load and unload time of asset transfers here!</h1>
+	<p>Here are the approved requests awaiting a logistics update:</p>
+	<table>
+		<tr>
+			<td>|&nbsp; Request ID &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Requester  &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; From  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; To  &nbsp; &nbsp; </td>
+			<td>|&nbsp; Approver  &nbsp; &nbsp; </td>
+		</tr>
+		<tr>
+			<td>-------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>--------------------------------</td>
+			<td>---------------</td>
+		</tr>
+
+		{% for entry in session.request_table %}
+		<tr>
+			<td>{{ entry.req_id }}</td>
+			<td>{{ entry.requester }}</td>
+			<td>{{ entry.tf_asset }}</td>
+			<td>{{ entry.src_fac }}</td>
+			<td>{{ entry.des_fac }}</td>
+			<td>{{ entry.approver }}</td>
+		</tr>
+		{% endfor %}	
+	</table>
+	<br>
+	<br>
+	<p>Select which approved request to update: </p>
+		<form action="{{url_for('update_transit')}}" method="POST">
+			Approved Request:
+			<select name="request">
+				{% for req_id in session.request_dropdown %}
+				<option value= "{{req_id}}">{{req_id}}</option>
+				{% endfor %}
+			</select>
+			Date: 
+			<input type="text" name="u_date" />
+			<input type="submit" value="Set Load Time!" name="load" />
+			<input type="submit" value="Set Unload Time!" name="unload" />
+		</form>
+	<br>
+	<br>
+		<form action="{{url_for('dashboard')}}" method="GET">
+			<input type="submit" value="Return to Dashboard" />
+		</form> &nbsp;
+		<form action="{{url_for('login')}}" method="GET">
+			<input type="submit" value="Log Out" />
+		</form> &nbsp;
+	</body>
+</html>
