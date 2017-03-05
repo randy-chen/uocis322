@@ -1,7 +1,71 @@
 <html>
 	<head><title>Dashboard</title></head>
-	<body><h1>Hi, {{session['user']}} :)</h1>
-	<p></p>
+	<body><h1>Hi, {{session['role']}} {{session['user']}} :)</h1>
+	{% if session['role']=='Logistics Officer' %}
+	<p> Here is a table of the approved transfers that need load and unload times set: </p>
+	<table>
+		<tr>
+			<td>|&nbsp; Request ID &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Requester  &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; From  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; To  &nbsp; &nbsp; </td>
+			<td>|&nbsp; Approver  &nbsp; &nbsp; </td>
+		</tr>
+		<tr>
+			<td>---------------------</td>
+			<td>--------------------------------------</td>
+			<td>--------------------------------------</td>
+			<td>--------------------------------</td>
+			<td>--------------------------------</td>
+			<td>--------------------------------------</td>
+		</tr>
+
+		{% for entry in session.logistics_table %}
+		<tr>
+			<td>{{ entry.req_id }}</td>
+			<td>{{ entry.requester }}</td>
+			<td>{{ entry.tf_asset }}</td>
+			<td>{{ entry.src_fac }}</td>
+			<td>{{ entry.des_fac }}</td>
+			<td>{{ entry.approver }}</td>
+			<td><a href="{{url_for('update_transit')}}">Go</a></td>
+		</tr>
+		{% endfor %}	
+	</table>
+	{% endif %}
+	{% if session['role']=='Facilities Officer' %}
+	<p> Here is a table of the transfer requests awaiting your decision: </p>
+	<table>
+		<tr>
+			<td>|&nbsp; Request ID &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Requester  &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; From  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; To  &nbsp; &nbsp; </td>
+		</tr>
+		<tr>
+			<td>---------------------</td>
+			<td>--------------------------------------</td>
+			<td>--------------------------------------</td>
+			<td>--------------------------------</td>
+			<td>--------------------------------</td>
+		</tr>
+
+		{% for entry in session.facoff_table %}
+		<tr>
+			<td>{{ entry.req_id }}</td>
+			<td>{{ entry.requester }}</td>
+			<td>{{ entry.tf_asset }}</td>
+			<td>{{ entry.src_fac }}</td>
+			<td>{{ entry.des_fac }}</td>
+			<td><a href="{{url_for('approve_req')}}">Go</a></td>
+		</tr>
+		{% endfor %}	
+	</table>
+	{% endif %}
+	<br>
+	<br>
 		<form action="{{url_for('add_facility')}}" method="GET">
 			Got a new facility? <input type="submit" value="Add Facility" />
 		</form>

@@ -76,6 +76,32 @@ def dashboard():
 	cur.execute("SELECT role FROM users WHERE username=%s", (session['user'],))
 	user_role = cur.fetchone()[0]
 	session['role'] = user_role
+
+	
+	sql = """SELECT req_id, requester, tf_asset, src_fac, des_fac, approver 
+FROM transfers 
+WHERE (tf_status='Approved' 
+AND unload_dt IS NULL)
+"""
+	# in the future, include the time that the request was made on
+	cur.execute(sql)
+	res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+	logistics_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+	for r in res:
+		logistics_table.append( dict(zip(('req_id','requester', 'tf_asset', 'src_fac', 'des_fac', 'approver'), r)) )
+	session['logistics_table'] = logistics_table
+
+	sql = """SELECT req_id, requester, tf_asset, src_fac, des_fac 
+FROM transfers
+WHERE tf_status='Pending'
+"""
+	cur.execute(sql)
+	res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+	facoff_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+	for r in res:
+		facoff_table.append( dict(zip(('req_id','requester', 'tf_asset', 'src_fac', 'des_fac'), r)) )
+	session['facoff_table'] = facoff_table
+
 	return render_template('dashboard.html')
 
 """"""	
@@ -136,6 +162,8 @@ JOIN facilities f ON aa.facility_fk=f.facility_pk
 		for r in res:
 			facility_list.append(r[0])
 		session['facility_dropdown'] = facility_list
+		session['num_fac'] = len(facility_list)	
+	
 		return render_template('add_asset.html')
 
 	if request.method=='POST':
@@ -281,6 +309,21 @@ def transfer_req():
 	if request.method=='GET':
 		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
+			# Ready the data to load the assets table
+			sql = """SELECT asset_tag, description, common_name, arrival, status, disposal 
+FROM assets a
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+WHERE status='Present'
+"""
+			cur.execute(sql)
+			res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+			asset_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+			for r in res:
+				asset_table.append( dict(zip(('asset_tag', 'description', 'common_name', 'arrival', 'status', 'disposal'), r)) )
+			#print(asset_table)
+			session['asset_table'] = asset_table
+
 			# Ready the data for the present assets drop-down
 			sql = "SELECT asset_tag FROM assets where status='Present'"
 			cur.execute(sql)
@@ -289,6 +332,7 @@ def transfer_req():
 			for r in res:
 				present_asset_list.append(r[0])
 			session['present_asset_dropdown'] = present_asset_list
+			session['num_assets']             = len(present_asset_list)
 			
 			# Ready the data for the facillities drop-down
 			sql = "SELECT common_name FROM facilities"
@@ -303,23 +347,23 @@ def transfer_req():
 
 	if request.method=='POST':
 		asset    = request.form['tag']
-		source   = request.form['src']
 		dest     = request.form['dest']
-		if (source==dest):
+		sql = """SELECT common_name
+FROM assets a
+JOIN asset_at aa ON a.asset_pk=aa.asset_fk
+JOIN facilities f ON aa.facility_fk=f.facility_pk
+WHERE asset_tag=%s
+"""
+		cur.execute(sql, (asset,))
+		source   = cur.fetchone()[0]
+		print(source)
+		print(dest)
+		if asset==None or source==dest:
 			return redirect(url_for('af_error'))
 
 		cur.execute("INSERT INTO transfers (requester, tf_asset, src_fac, tf_status, des_fac) VALUES (%s, %s, %s, %s, %s)", (session['user'],asset,source,'Pending',dest,))
-		conn.commit()#Need to track the date of the request<><><><><>
-		'''
-		cur.execute("SELECT asset_pk FROM assets WHERE asset_tag=%s", (tag,))
-		asset_key = cur.fetchone()
-		#print(facility)
-		cur.execute("SELECT facility_pk FROM facilities WHERE common_name=%s", (facility,))
-		facility_key = cur.fetchone()
-		#print(facility_key)
-		cur.execute("INSERT INTO asset_at (asset_fk, facility_fk, arrival) VALUES (%s, %s, %s)", (asset_key,facility_key,timestamp,))
-		conn.commit()
-		'''
+		conn.commit()# In the future, will need to track the date of the request<><><><><>
+		
 		return redirect(url_for('req_success'))
 			
 	return redirect(url_for('af_error'))
@@ -327,15 +371,13 @@ def transfer_req():
 @app.route('/approve_req', methods=['GET','POST'])
 def approve_req():
 	if request.method=='GET':
-		request.form['aprv'] = None
-		request.form['rjct'] = None
 		#print("printing role: " + session['role'])
 		if session['role']=="Facilities Officer": 
 			# Ready the data to load the requests table
 			sql = """SELECT req_id, requester, tf_asset, src_fac, des_fac 
 FROM transfers
+WHERE tf_status='Pending'
 """
-			# <><><><><><><>still need to include the time that the request was made on <><><><><><><>
 			cur.execute(sql)
 			res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
 			request_table = []   # this is the processed result I'll stick in the session (or pass to the template)
@@ -344,21 +386,30 @@ FROM transfers
 			#print(request_table)
 			session['request_table'] = request_table
 
+			# Ready the data for the requests drop-down
+			sql = "SELECT req_id FROM transfers WHERE tf_status='Pending'"
+			cur.execute(sql)
+			res1 = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+			request_list = []   # this is the processed result I'll stick in the session (or pass to the template)
+			for r in res1:
+				request_list.append(r[0])
+			session['request_dropdown'] = request_list
+
 			return render_template('approve_req.html')
 
 	if request.method=='POST':
 		req_id = request.form['request']
-		# <><><> still need to keep track of the date that the request got approved.
-		if request.form['aprv']:
-			cur.execute("UPDATE transfers SET tf_status='Approved' WHERE req_id=%s", (req_id,))
+		# in the future, will need to keep track of the date that the request got approved.
+		if request.form['decision']=='Approve Request!':
+			cur.execute("UPDATE transfers SET tf_status='Approved', approver=%s WHERE req_id=%s", (session['user'],req_id,))
 			conn.commit()
-			
-		if request.form['rjct']:
+			return redirect(url_for('dashboard'))
+		if request.form['decision']=='Reject Request!':
 			cur.execute("DELETE FROM transfers WHERE req_id=%s", (req_id,))
 			conn.commit()
+			return redirect(url_for('dashboard'))
 		
-		return redirect(url_for('dashboard'))
-
+		return redirect(url_for('af_error'))
 
 	return redirect(url_for('af_error'))
 """"""
@@ -368,62 +419,85 @@ def update_transit():
 		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
 			# Ready the data to load the requests table
-			sql = """SELECT req_id, requester, tf_asset, src_fac, des_fac 
+			sql = """SELECT req_id, requester, tf_asset, src_fac, load_dt, des_fac, unload_dt, approver 
 FROM transfers 
 WHERE (tf_status='Approved' 
-AND (unload_dt IS NULL OR unload_dt=''))
+AND unload_dt IS NULL)
 """
-			# <><><><><><><>still need to include the time that the request was made on <><><><><><><>
+			# in the future, include the time that the request was made on
 			cur.execute(sql)
 			res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
 			request_table = []   # this is the processed result I'll stick in the session (or pass to the template)
 			for r in res:
-				request_table.append( dict(zip(('req_id','requester', 'tf_asset', 'src_fac', 'des_fac'), r)) )
+				request_table.append( dict(zip(('req_id','requester', 'tf_asset', 'src_fac','load_dt', 'des_fac', 'unload_dt', 'approver'), r)) )
 			#print(request_table)
 			session['request_table'] = request_table
 
-			return render_template('approve_req.html')
+			# Ready the data for the requests drop-down
+			sql = "SELECT req_id FROM transfers WHERE (tf_status='Approved' AND unload_dt IS NULL)"
+			cur.execute(sql)
+			res1 = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+			request_list = []   # this is the processed result I'll stick in the session (or pass to the template)
+			for r in res1:
+				request_list.append(r[0])
+			session['request_dropdown'] = request_list
+			session['num_reqs']        = len(request_list)
+
+			return render_template('update_transit.html')
 
 	if request.method=='POST':
+		# only updates requests that have been approved.
 		req_id  = request.form['request']
 		up_date = request.form['u_date']
-		if request.form['load']:
-			if valid_update(req_id, up_date):
-				timestamp = datetime.datetime.strptime(form_date, '%m/%d/%Y')
-				# need to handle different cases.
-				cur.execute("UPDATE transfers SET load_dt=%s WHERE req_id=%s", (req_id,))
+		if request.form['time']=='Set Load Time!':
+			#print("loading")
+			update_type = 0
+			if valid_update(req_id, up_date, update_type):
+				#print("doing the database updating")
+				timestamp = datetime.datetime.strptime(up_date, '%m/%d/%Y')
+				cur.execute("UPDATE transfers SET load_dt=%s WHERE req_id=%s", (timestamp,req_id,))
 				conn.commit()
 			
 				return redirect(url_for('dashboard'))
 
-		if request.form['unload']:
-			cur.execute("UPDATE transfers SET unload_dt=%s WHERE req_id=%s", (req_id,))
-			conn.commit()
+		if request.form['time']=='Set Unload Time!':
+			#print("unloading")
+			update_type = 1
+			if valid_update(req_id, up_date, update_type):			
+				#print("doing the database unloading")
+				timestamp = datetime.datetime.strptime(up_date, '%m/%d/%Y')
+				cur.execute("UPDATE transfers SET unload_dt=%s WHERE req_id=%s", (timestamp,req_id,))
+				conn.commit()
 
-		# only updates requests that have been approved.
-			return redirect(url_for('dashboard'))
+				return redirect(url_for('dashboard'))
 			
-		
 		return redirect(url_for('af_error'))
-
 
 	return redirect(url_for('af_error'))
 
-def valid_load(_request, _date):
+def valid_update(_request, _date, _type):
+	if not valid_date(_date):
+		return False
 	sql = """SELECT load_dt, unload_dt
-FROM transfers
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
 JOIN facilities f ON aa.facility_fk=f.facility_pk
 JOIN transfers t ON a.asset_tag=t.tf_asset
-WHERE (req_id=%s AND arrival<%s) 
+WHERE (req_id=%s) 
 """
-	req_and_date =(_request, _date,)
-	cur.execute(sql, tag_and_date)
-	update_data = cur.fetchone()
+	req =(_request,)
+	cur.execute(sql, req)
+	load_data = cur.fetchone()
 	#print(dispose_data)
-	if dispose_data:
+	# case for load
+	if _type==0 and (not load_data[0]) and (not load_data[1]):
 		return True
+	# case for unload
+	elif _type==1 and load_data[0] and (not load_data[1]):
+		timestamp = datetime.datetime.strptime(_date, '%m/%d/%Y')
+		if load_data[0] < timestamp:
+			return True
+	
 	return False
 		
 """"""

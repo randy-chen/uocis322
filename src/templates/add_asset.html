@@ -32,6 +32,7 @@
 	</table>
 	<br>
 	<br>
+	{% if session.num_fac > 0 %}
 	<p>To add a new asset, enter the asset's tag and description below:</p>
 		<form action="{{url_for('add_asset')}}" method="POST">
 			Tag:         <input type="text" name="tag"  />
@@ -46,6 +47,7 @@
 			<input type="submit" value="Add Asset!"/>
 		</form>
 	<br>
+	{% endif %}
 	<br>
 		<form action="{{url_for('dashboard')}}" method="GET">
 			<input type="submit" value="Return to Dashboard" />

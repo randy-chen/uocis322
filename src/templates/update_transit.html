@@ -8,15 +8,20 @@
 			<td>|&nbsp; Requester  &nbsp; &nbsp; &nbsp;</td>
 			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
 			<td>|&nbsp; From  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Load Time  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
 			<td>|&nbsp; To  &nbsp; &nbsp; </td>
+			<td>|&nbsp; Unload Time &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
 			<td>|&nbsp; Approver  &nbsp; &nbsp; </td>
 		</tr>
 		<tr>
-			<td>-------------------------</td>
-			<td>----------------------------------------------</td>
-			<td>----------------------------------------------</td>
+			<td>---------------------</td>
+			<td>--------------------------------------</td>
+			<td>--------------------------------------</td>
 			<td>--------------------------------</td>
-			<td>---------------</td>
+			<td>--------------------------------</td>
+			<td>--------------------------------</td>
+			<td>--------------------------------</td>
+			<td>--------------------------------------</td>
 		</tr>
 
 		{% for entry in session.request_table %}
@@ -25,13 +30,16 @@
 			<td>{{ entry.requester }}</td>
 			<td>{{ entry.tf_asset }}</td>
 			<td>{{ entry.src_fac }}</td>
+			<td>{{ entry.load_dt }}</td>
 			<td>{{ entry.des_fac }}</td>
+			<td>{{ entry.unload_dt }}</td>
 			<td>{{ entry.approver }}</td>
 		</tr>
 		{% endfor %}	
 	</table>
 	<br>
 	<br>
+	{% if session.num_reqs > 0%}
 	<p>Select which approved request to update: </p>
 		<form action="{{url_for('update_transit')}}" method="POST">
 			Approved Request:
@@ -42,9 +50,10 @@
 			</select>
 			Date: 
 			<input type="text" name="u_date" />
-			<input type="submit" value="Set Load Time!" name="load" />
-			<input type="submit" value="Set Unload Time!" name="unload" />
+			<input type="submit" value="Set Load Time!"   name="time" />
+			<input type="submit" value="Set Unload Time!" name="time" />
 		</form>
+	{% endif %}
 	<br>
 	<br>
 		<form action="{{url_for('dashboard')}}" method="GET">

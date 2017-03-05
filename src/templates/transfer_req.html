@@ -2,18 +2,13 @@
 	<head><title>Request Transfer</title></head>
 	<body><h1>Request to transfer an asset here!</h1>
 	<br>
-	<p>To transfer an asset, select the tag and the source and destination facilities below:</p>
+	{% if session.num_assets > 0%}
+	<p>To transfer an asset, select the tag and the destination facility below:</p>
 		<form action="{{url_for('transfer_req')}}" method="POST">
 			Asset Tag:
 			<select name="tag">
 				{% for asset in session.present_asset_dropdown %}
 				<option value= "{{asset}}">{{asset}}</option>
-				{% endfor %}
-			</select>
-			Source Facility:
-			<select name="src">
-				{% for facility in session.facility_dropdown %}
-				<option value= "{{facility}}">{{facility}}</option>
 				{% endfor %}
 			</select>
 			Destination Facility:
@@ -25,6 +20,7 @@
 			<input type="submit" value="Request Transfer!"/>
 		</form>
 	<br>
+	{% endif %}
 	<table>
 		<tr>
 			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp;</td>
