@@ -73,6 +73,7 @@ def valid_input(_username, _password):
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
 	session['asset_table'] = []
+	session['transfer_table'] = []
 	cur.execute("SELECT role FROM users WHERE username=%s", (session['user'],))
 	user_role = cur.fetchone()[0]
 	session['role'] = user_role
@@ -501,6 +502,32 @@ WHERE (req_id=%s)
 	return False
 		
 """"""
+@app.route('/transfer_report', methods=['GET','POST'])
+def transfer_report():
+	if request.method=='GET':
+		return render_template('transfer_report.html') 
+	
+
+	if request.method=='POST':
+		tdate     = request.form['t_date']
+		if not valid_date(tdate):
+			return redirect(url_for('af_error'))
+		timestamp = datetime.datetime.strptime(tdate, '%m/%d/%Y')
+		sql = """SELECT tf_asset, load_dt, unload_dt
+FROM transfers
+WHERE (load_dt<%s AND (unload_dt>%s OR unload_dt IS NULL)) 
+"""
+		exe = (timestamp,timestamp,)
+		cur.execute(sql,exe)
+		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
+		transfer_table = []   # this is the processed result I'll stick in the session (or pass to the template)
+		for r in res:
+			transfer_table.append( dict(zip(('asset_tag', 'load_dt', 'unload_dt'), r)) )
+		session['transfer_table'] = transfer_table
+			
+		return redirect(url_for('transfer_report'))
+
+	return redirect(url_for('af_error'))
 """"""
 """"""
 

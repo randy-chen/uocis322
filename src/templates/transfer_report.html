@@ -1,7 +1,31 @@
 <html>
 	<head><title>Transfer Report</title></head>
 	<body><h1>Welcome!</h1>
-	<p> Nothing is actually here right now. Be sure to check back in the future!</p>
+	<p> Generate a report of transfers on a certain date.</p>
+		<form action="{{url_for('transfer_report')}}" method="POST">
+			Date (mm/dd/yyyy): <input type="text" name="t_date" />
+			<input type="submit" value="Generate Report!"/>
+			<br>
+		</form>
+	<table>
+		<tr>
+			<td>|&nbsp; Asset Tag &nbsp; &nbsp; &nbsp;</td>
+			<td>|&nbsp; Load Time  &nbsp; &nbsp; </td>
+			<td>|&nbsp; Unload Time  &nbsp; &nbsp;</td>
+		</tr>
+		<tr>
+			<td>-------------------------</td>
+			<td>----------------------------------------------</td>
+			<td>----------------------------------------------</td>
+		</tr>
+		{% for entry in session.transfer_table %}
+		<tr>
+			<td>{{ entry.asset_tag }}</td>
+			<td>{{ entry.load_dt }}</td>
+			<td>{{ entry.unload_dt }}</td>
+		</tr>
+		{% endfor %}	
+	</table>
 	<br>
 		<form action="{{url_for('dashboard')}}" method="GET">
 			<input type="submit" value="Dashboard" />

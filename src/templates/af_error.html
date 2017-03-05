@@ -34,6 +34,34 @@
 			<input type="submit" value="Return to Asset Report" />
 		</form>
 
+	<p>If you got here from trying to put in a transfer request:</p>
+	<p>&lt;&gt; Be sure that you are not attempting to have an asset transferred to its source destination.</p>
+	<p>&lt;&gt; Be sure that you have clearance to do so as a Logistics Officer.</p>
+		<form action="{{url_for('transfer_req')}}" method="GET">
+			<input type="submit" value="Return to Requesting a Transfer" />
+		</form>
+
+	<p>If you got here from trying to manage a transfer request:</p>
+	<p>&lt;&gt; Be sure that you have clearance to do so as a Facilities Officer.</p>
+		<form action="{{url_for('approve_req')}}" method="GET">
+			<input type="submit" value="Return to Managing Requests" />
+		</form>
+
+	<p>If you got here from trying to put in a transfer request:</p>
+	<p>&lt;&gt; Be sure the date entered was in the accepted format (mm/dd/yyyy).</p>
+	<p>&lt;&gt; Be sure that you are not setting the load time when a load time has already been set.</p>
+	<p>&lt;&gt; Be sure that you are not setting the unload time before the load time.</p>
+	<p>&lt;&gt; Be sure that you have clearance to do so as a Logistics Officer.</p>
+		<form action="{{url_for('update_transit')}}" method="GET">
+			<input type="submit" value="Return to Updating Transit" />
+		</form>
+
+	<p>If you got here from trying to get a report on assets in transit:</p>
+	<p>&lt;&gt; Be sure the date entered was in the accepted format (mm/dd/yyyy).</p>
+		<form action="{{url_for('transfer_report')}}" method="GET">
+			<input type="submit" value="Return to Transfer Report" />
+		</form>
+
 	<br>
 		<form action="{{url_for('dashboard')}}" method="GET">
 			<input type="submit" value="Return to Dashboard" />
