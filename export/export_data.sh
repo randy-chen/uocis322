@@ -7,7 +7,4 @@ fi
 
 rm -rf $2
 mkdir $2
-cd $2
-python3 ../export.py $1 $2
-cd ..
-cp -R $2 ../import
+python3 export.py $1 $2

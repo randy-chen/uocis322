@@ -5,10 +5,11 @@ import sys
 conn = psycopg2.connect(dbname=sys.argv[1], host='127.0.0.1', port=5432)
 cur  = conn.cursor()
 fks  = dict()
+path = sys.argv[2]
 
 def export():
 
-	with open('users.csv', 'w') as csvfile, open('facilities.csv', 'w') as csvfile1, open('assets.csv', 'w') as csvfile2, open('transfers.csv', 'w') as csvfile3:
+	with open(path+'/users.csv', 'w') as csvfile, open(path+'/facilities.csv', 'w') as csvfile1, open(path+'/assets.csv', 'w') as csvfile2, open(path+'/transfers.csv', 'w') as csvfile3:
 		fieldnames  = ['username', 'password', 'role', 'active']
 		fieldnames1 = ['fcode', 'common_name']
 		fieldnames2 = ['asset_tag', 'description', 'facility', 'acquired', 'disposed']

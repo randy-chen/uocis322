@@ -5,6 +5,4 @@ if [ "$#" -ne 2 ]; then
     exit;
 fi
 
-cd $2
-python3 ../import.py $1 $2
-cd ..
+python3 import.py $1 $2

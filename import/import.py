@@ -11,7 +11,7 @@ fks  = dict()
 path = sys.argv[2]
 def assets():
 
-	with open('users.csv', 'r') as csv0, open('facilities.csv', 'r') as csv1, open('assets.csv', 'r') as csv2, open('transfers.csv', 'r') as csv3:
+	with open(path+'/users.csv', 'r') as csv0, open(path+'/facilities.csv', 'r') as csv1, open(path+'/assets.csv', 'r') as csv2, open(path+'/transfers.csv', 'r') as csv3:
 		reader  = csv.DictReader(csv0)
 		reader1 = csv.DictReader(csv1)
 		reader2 = csv.DictReader(csv2)
