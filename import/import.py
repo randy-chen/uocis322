@@ -5,26 +5,51 @@ import sys
 # need to set the psycopg2 ocnnection through the config file???
 
 
-conn = psycopg2.connect(dbname=sys.argv[1], host='127.0.0.1', port=int(sys.argv[2]))
+conn = psycopg2.connect(dbname=sys.argv[1], host='127.0.0.1', port=5432)
 cur  = conn.cursor()
 fks  = dict()
-
+path = sys.argv[2]
 def assets():
 
-	with open('./osnap_legacy/users.csv', 'r') as csv0, open('./osnap_legacy/facilities.csv', 'r') as csv2, open('./osnap_legacy/assets.csv', 'r') as csv3, open('./osnap_legacy/transfers.csv', 'r') as csv4:
+	with open('users.csv', 'r') as csv0, open('facilities.csv', 'r') as csv1, open('assets.csv', 'r') as csv2, open('transfers.csv', 'r') as csv3:
 		reader  = csv.DictReader(csv0)
 		reader1 = csv.DictReader(csv1)
 		reader2 = csv.DictReader(csv2)
 		reader3 = csv.DictReader(csv3)
 
 		for row in reader:
-			cur.execute("insert into users(username, password, role) values (%s,%s,%s)", (row['username'],row['password'],row['role'],)
+			cur.execute("INSERT INTO users(username, password, role, active) values (%s,%s,%s,%s)", (row['username'],row['password'],row['role'],True,))
 		for row in reader1:
-			cur.execute("insert into assets(asset_pk, username, password, role) values (%s,%s,%s,%s)", (row['user_pk'],row['username'],row['password'],row['role'],)
+			cur.execute("INSERT INTO facilities(fcode, common_name) values (%s,%s)", (row['fcode'],row['common_name'],))
 		for row in reader2:
-			cur.execute("insert into users(user_pk, username, password, role) values (%s,%s,%s,%s)", (row['user_pk'],row['username'],row['password'],row['role'],)
+			cur.execute("INSERT INTO assets(asset_tag, description) values (%s,%s)", (row['asset_tag'],row['description'],))
+			cur.execute("SELECT asset_pk FROM assets WHERE asset_tag=%s", (row['asset_tag'],))
+			asset_key = cur.fetchone()
+			#print(facility)
+			cur.execute("SELECT facility_pk FROM facilities WHERE common_name=%s", (row['common_name'],))
+			facility_key = cur.fetchone()
+			#print(facility_key)
+			arrv = row['acquired']
+			if arrv=='':
+				arrv = None
+			disp = row['disposed']
+			if disp=='':
+				disp = None
+			cur.execute("INSERT INTO asset_at (asset_fk, facility_fk, arrival, disposal) VALUES (%s,%s,%s,%s)", (asset_key,facility_key,arrv,disp,))
 		for row in reader3:
-			cur.execute("insert into assets(product_fk, asset_tag, description, alt_description) values (%s,%s,%s,%s)", (fk, row['asset tag'],desc,'DC',) )
+			r_dt = row['request_dt']
+			if r_dt=='':
+				r_dt = None
+			a_dt = row['approve_dt']
+			if a_dt=='':
+				a_dt = None
+			l_dt = row['load_dt']
+			if l_dt=='':
+				l_dt = None
+			u_dt = row['unload_dt']
+			if u_dt=='':
+				u_dt = None
+			cur.execute("INSERT INTO transfers(tf_asset, requester, req_dt, approver, aprv_dt, src_fac, des_fac, load_dt, unload_dt) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", (row['asset_tag'],row['request_by'],r_dt,row['approve_by'],a_dt,row['source'],row['destination'],l_dt,u_dt,))
 
 	return
 

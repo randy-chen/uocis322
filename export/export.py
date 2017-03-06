@@ -11,8 +11,8 @@ def export():
 	with open('users.csv', 'w') as csvfile, open('facilities.csv', 'w') as csvfile1, open('assets.csv', 'w') as csvfile2, open('transfers.csv', 'w') as csvfile3:
 		fieldnames  = ['username', 'password', 'role', 'active']
 		fieldnames1 = ['fcode', 'common_name']
-		fieldnames2 = ['asset_tag', 'description', 'common_name', 'arrival', 'disposal', 'status']
-		fieldnames3 = ['tf_asset','requester','req_dt','approver','approve_dt','src_fac','des_fac','load_dt','unload_dt']
+		fieldnames2 = ['asset_tag', 'description', 'common_name', 'acquired', 'disposed']
+		fieldnames3 = ['asset_tag','request_by','request_dt','approve_by','approve_dt','source','destination','load_dt','unload_dt']
 		writer  = csv.DictWriter(csvfile,   fieldnames=fieldnames)
 		writer1 = csv.DictWriter(csvfile1, fieldnames=fieldnames1)
 		writer2 = csv.DictWriter(csvfile2, fieldnames=fieldnames2)
@@ -28,11 +28,10 @@ def export():
 		rows = cur.fetchall()
 		writer1.writeheader()
 		for row in rows:
-			print(row)
+			#print(row)
 			writer1.writerow({'fcode': row[0], 'common_name': row[1]})
-
 # assets
-		sql = """SELECT asset_tag, description, common_name, arrival, disposal, status
+		sql = """SELECT asset_tag, description, common_name, arrival, disposal
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
 JOIN facilities f ON aa.facility_fk=f.facility_pk
@@ -41,13 +40,13 @@ JOIN facilities f ON aa.facility_fk=f.facility_pk
 		rows = cur.fetchall()
 		writer2.writeheader()
 		for row in rows:
-			writer2.writerow({'asset_tag': row[0], 'description': row[1], 'common_name': row[2], 'arrival': row[3], 'disposal': row[4], 'status': row[5]})
+			writer2.writerow({'asset_tag': row[0], 'description': row[1], 'common_name': row[2], 'acquired': row[3], 'disposed': row[4]})
 # transfers
 		cur.execute("SELECT tf_asset,requester,req_dt,approver,aprv_dt,src_fac,des_fac,load_dt,unload_dt FROM transfers")
 		rows = cur.fetchall()
 		writer3.writeheader()
 		for row in rows:
-			writer3.writerow({'tf_asset': row[0], 'requester': row[1], 'req_dt': row[2], 'approver': row[3], 'approve_dt': row[4],'src_fac': row[5],'des_fac': row[6],'load_dt': row[7],'unload_dt': row[8]})
+			writer3.writerow({'asset_tag': row[0], 'request_by': row[1], 'request_dt': row[2], 'approve_by': row[3], 'approve_dt': row[4],'source': row[5],'destination': row[6],'load_dt': row[7],'unload_dt': row[8]})
 
 
 export()
