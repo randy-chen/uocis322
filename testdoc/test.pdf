@@ -1,0 +1,51 @@
+This is a test plan to ensure the application is running properly. After going into your wsgi folder which contains all of the files from my src, 
+enter 'apachectl start' or 'apachecl restart', and go into your web browser and enter the url for your localhost:
+
+1) Create the initial users, one Logistics Officer, one Facilities Officer:
+	input: a username, a password (optional), select a role
+	output: a success screen that tells you you've successfully registered for the application.
+	check: 'psql <dbname>'; then 'select * from users;' to see the two users in the database.
+	-then return to the login page.
+2) Login to the system:
+	input: user credentials
+	output: dashboard. the dashboard should show you the work you have to do regarding transfer requests and updating transit (none at this step).
+3) From the dashboard, click the 'Add Facility' button to add two facilities:
+	input: facility common name(32 characters or less), facility code (6 characters or less), location (optional)
+	output: the facility information will be inserted into the database and you should be able to see the added facility on the same page
+	-after addiing two facilities, return to the dashboard.
+4) From the dashboard, click the 'Add Assets' button to add two assets:
+	input: asset_tag(16 characters or less), description(optional), select a facility, enter a mm/dd/yyy date.
+	output: the asset information will be inserted into the database and you should be able to see the added asset on the same page
+	-after addiing two assets, return to the dashboard.
+5) From the dashboard, click the 'Dispose Asset' to dispose of an asset:
+	input: a valid asset_tag, a valid mm/dd/yyyy date of disposal.
+	output: upon success, you will be taken back to the dashboard
+	-you can check the status of that diposed asset by going to the add asset page. Its status should be 'Disposed'
+6) Complete the asset transfer request:
+	input: as the logistics officer, select a present asset and a destination facility and request the transfer.
+	output: upon success, you will be taken to a page that tells you you have sucessfully requested a transfer.
+	-return to the dashboard and log out. Then log in as the Facilities Officer.
+7) Complete the transfer request approval:
+	on the dashboard should be a table of pending requests which await approval. At the end of each row should be a link to the page to approve or reject requests.
+	input: approve the request.
+	output: you should be taken back to the dashboard.
+8) Complete the transit update:
+	log out and then log in as the logistics officer. You should now see an approved transit request for you to update and a link to update transit.
+	click on the link and be taken to a page where you can set load and unload times.
+	input: set load time for the approved transfer, be taken to the dashboard, and click on the link again to set the unload time.
+	output: you will get taken back to the dashboard, with your work completed.
+9) Run each of the reports:
+	Asset Report: choose a facility (optional) and a mm/dd/yyyy date, and generate a report of the assets at their facilities on the entered date. Check that the approved transfer is present
+		when the appropriate date is entered.
+	Transfer Report: enter a mm/dd/yyyy date, and generate a report of the assets either in transit on that date.
+
+Final checks: you can psql <dbname> and see if all of the appropriate data is present in the database. Examples queries:
+	select * from users;
+	select * from facilities;
+	select * from assets;
+	select * from asset_at;
+	select * from transfers;
+
+note that your table names may differ from the ones I used for my database.
+note that if you enter invalid information at any point in testing, you should be taken to an error page that will help you troubleshoot what went wrong
+and link you back to various pages in application.
