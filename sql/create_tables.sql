@@ -12,7 +12,8 @@ CREATE TABLE users (
 	user_pk         serial primary key,
 	username        varchar(16), 
 	password        varchar(16),
-	role            text
+	role            text,
+	active			boolean
 );
 
 CREATE TABLE assets (
