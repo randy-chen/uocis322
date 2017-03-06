@@ -5,6 +5,7 @@ if [ "$#" -ne 2 ]; then
     exit;
 fi
 
+rm -rf $2
 mkdir $2
 cd $2
 python3 ../export.py $1 $2

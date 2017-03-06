@@ -1,3 +1,3 @@
-tf_asset,requester,req_dt,approver,approve_dt,src_fac,des_fac,load_dt,unload_dt
+asset_tag,request_by,request_dt,approve_by,approve_dt,source,destination,load_dt,unload_dt
 a,rick,,morty,,A,B,2017-09-24 00:00:00,2017-09-27 00:00:00
 e,rick,,morty,,E,F,2017-09-23 00:00:00,
