@@ -18,7 +18,10 @@ def assets():
 		reader3 = csv.DictReader(csv3)
 
 		for row in reader:
-			cur.execute("INSERT INTO users(username, password, role, active) values (%s,%s,%s,%s)", (row['username'],row['password'],row['role'],row['active'],))
+			_active = row['active']
+			if _active=='' or _active=='NULL':
+				_active = True
+			cur.execute("INSERT INTO users(username, password, role, active) values (%s,%s,%s,%s)", (row['username'],row['password'],row['role'],_active,))
 		for row in reader1:
 			cur.execute("INSERT INTO facilities(fcode, common_name) values (%s,%s)", (row['fcode'],row['common_name'],))
 		for row in reader2:
