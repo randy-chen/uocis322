@@ -11,7 +11,7 @@ def export():
 	with open('users.csv', 'w') as csvfile, open('facilities.csv', 'w') as csvfile1, open('assets.csv', 'w') as csvfile2, open('transfers.csv', 'w') as csvfile3:
 		fieldnames  = ['username', 'password', 'role', 'active']
 		fieldnames1 = ['fcode', 'common_name']
-		fieldnames2 = ['asset_tag', 'description', 'common_name', 'acquired', 'disposed']
+		fieldnames2 = ['asset_tag', 'description', 'facility', 'acquired', 'disposed']
 		fieldnames3 = ['asset_tag','request_by','request_dt','approve_by','approve_dt','source','destination','load_dt','unload_dt']
 		writer  = csv.DictWriter(csvfile,   fieldnames=fieldnames)
 		writer1 = csv.DictWriter(csvfile1, fieldnames=fieldnames1)
@@ -31,7 +31,7 @@ def export():
 			#print(row)
 			writer1.writerow({'fcode': row[0], 'common_name': row[1]})
 # assets
-		sql = """SELECT asset_tag, description, common_name, arrival, disposal
+		sql = """SELECT asset_tag, description, fcode, arrival, disposal
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
 JOIN facilities f ON aa.facility_fk=f.facility_pk
@@ -40,7 +40,7 @@ JOIN facilities f ON aa.facility_fk=f.facility_pk
 		rows = cur.fetchall()
 		writer2.writeheader()
 		for row in rows:
-			writer2.writerow({'asset_tag': row[0], 'description': row[1], 'common_name': row[2], 'acquired': row[3], 'disposed': row[4]})
+			writer2.writerow({'asset_tag': row[0], 'description': row[1], 'facility': row[2], 'acquired': row[3], 'disposed': row[4]})
 # transfers
 		cur.execute("SELECT tf_asset,requester,req_dt,approver,aprv_dt,src_fac,des_fac,load_dt,unload_dt FROM transfers")
 		rows = cur.fetchall()

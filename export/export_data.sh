@@ -9,3 +9,4 @@ mkdir $2
 cd $2
 python3 ../export.py $1 $2
 cd ..
+cp -R $2 ../import

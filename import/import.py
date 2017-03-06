@@ -18,7 +18,7 @@ def assets():
 		reader3 = csv.DictReader(csv3)
 
 		for row in reader:
-			cur.execute("INSERT INTO users(username, password, role, active) values (%s,%s,%s,%s)", (row['username'],row['password'],row['role'],True,))
+			cur.execute("INSERT INTO users(username, password, role, active) values (%s,%s,%s,%s)", (row['username'],row['password'],row['role'],row['active'],))
 		for row in reader1:
 			cur.execute("INSERT INTO facilities(fcode, common_name) values (%s,%s)", (row['fcode'],row['common_name'],))
 		for row in reader2:
@@ -26,15 +26,17 @@ def assets():
 			cur.execute("SELECT asset_pk FROM assets WHERE asset_tag=%s", (row['asset_tag'],))
 			asset_key = cur.fetchone()
 			#print(facility)
-			cur.execute("SELECT facility_pk FROM facilities WHERE common_name=%s", (row['common_name'],))
+			cur.execute("SELECT facility_pk FROM facilities WHERE fcode=%s", (row['facility'],))
 			facility_key = cur.fetchone()
 			#print(facility_key)
 			arrv = row['acquired']
-			if arrv=='':
+			if not arrv or arrv=='NULL':
 				arrv = None
 			disp = row['disposed']
-			if disp=='':
+			#print(disp)
+			if not disp or disp=='NULL':
 				disp = None
+			#print("new disp val: %s", disp)
 			cur.execute("INSERT INTO asset_at (asset_fk, facility_fk, arrival, disposal) VALUES (%s,%s,%s,%s)", (asset_key,facility_key,arrv,disp,))
 		for row in reader3:
 			r_dt = row['request_dt']
