@@ -6,6 +6,11 @@ enter 'apachectl start' or 'apachecl restart', and go into your web browser and 
 	output: a success screen that tells you you've successfully registered for the application.
 	check: 'psql <dbname>'; then 'select * from users;' to see the two users in the database.
 	-then return to the login page.
+1.5) If you are using the newest version of the app, then there should no longer be a way to create a user through the application running
+	on your browser. After the app is running through apache, go into the clients directory and run:
+	python3 activate_user.py http://127.0.0.1:8080/ rick password logofc to create and activate a user. After step 9 is completed, run:
+	python3 revoke_user.py http://127.0.0.1:8080/ rick 
+	to ensure that we are revoking users properly. Again, one can psql the database to ensure all the appripriate data is there.
 2) Login to the system:
 	input: user credentials
 	output: dashboard. the dashboard should show you the work you have to do regarding transfer requests and updating transit (none at this step).
