@@ -437,6 +437,7 @@ WHERE tf_status='Pending'
 			for r in res1:
 				request_list.append(r[0])
 			session['request_dropdown'] = request_list
+			session['num_pending_reqs'] = len(request_list)
 
 			return render_template('approve_req.html')
 
@@ -486,7 +487,7 @@ AND unload_dt IS NULL)
 			for r in res1:
 				request_list.append(r[0])
 			session['request_dropdown'] = request_list
-			session['num_reqs']        = len(request_list)
+			session['num_reqs']         = len(request_list)
 
 			return render_template('update_transit.html')
 
