@@ -351,7 +351,7 @@ def transfer_req():
 		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
 			# Ready the data to load the assets table
-			sql = """SELECT asset_tag, description, common_name, arrival, status, disposal 
+			sql = """SELECT asset_tag, description, fcode, arrival, status, disposal 
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
 JOIN facilities f ON aa.facility_fk=f.facility_pk
@@ -361,7 +361,7 @@ WHERE status='Present'
 			res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
 			asset_table = []   # this is the processed result I'll stick in the session (or pass to the template)
 			for r in res:
-				asset_table.append( dict(zip(('asset_tag', 'description', 'common_name', 'arrival', 'status', 'disposal'), r)) )
+				asset_table.append( dict(zip(('asset_tag', 'description', 'focde', 'arrival', 'status', 'disposal'), r)) )
 			#print(asset_table)
 			session['asset_table'] = asset_table
 
@@ -376,7 +376,7 @@ WHERE status='Present'
 			session['num_assets']             = len(present_asset_list)
 			
 			# Ready the data for the facillities drop-down
-			sql = "SELECT common_name FROM facilities"
+			sql = "SELECT fcode FROM facilities"
 			cur.execute(sql)
 			res1 = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
 			facility_list = []   # this is the processed result I'll stick in the session (or pass to the template)
@@ -389,7 +389,7 @@ WHERE status='Present'
 	if request.method=='POST':
 		asset    = request.form['tag']
 		dest     = request.form['dest']
-		sql = """SELECT common_name
+		sql = """SELECT fcode
 FROM assets a
 JOIN asset_at aa ON a.asset_pk=aa.asset_fk
 JOIN facilities f ON aa.facility_fk=f.facility_pk
