@@ -103,7 +103,7 @@ def dashboard():
 	print(valid_get)
 	if valid_get is None:
 		return redirect(url_for('af_error'))
-	user_role = cur.fetchone()[0]
+	user_role = valid_get[0]
 	print(user_role)
 	if user_role is None:
 		return redirect(url_for('af_error'))
@@ -247,7 +247,7 @@ def valid_date(_date):
 def dispose_asset():
 	if request.method=='GET':
 		if session['user']=="":
-			return redirect(url_for('error'))
+			return redirect(url_for('af_error'))
 		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
 			return render_template('dispose_asset.html')
