@@ -12,7 +12,7 @@ app = Flask(__name__)
 conn = psycopg2.connect(dbname=dbname, host=dbhost, port=dbport)
 cur  = conn.cursor()
 
-app.secret_key = "onsapwhoderp?"
+app.secret_key = "osnapwholostderp?"
 
 
 @app.route('/')
@@ -44,40 +44,70 @@ def valid_login(_username, _password):
 			return True
 	return False
 """"""
-@app.route('/create_user', methods=['GET','POST'])
-def create_user():
-	if request.method=='GET':
-		return render_template('create_user.html')
+@app.route('/activate_user', methods=['POST'])
+def activate_user():
+	#if request.method=='GET':
+	#	return render_template('create_user.html')
 
 	if request.method=='POST':
 		usern     = request.form['user']
 		passw     = request.form['pass']
 		form_role = request.form['role']
-		if valid_input(usern, passw):	
-			cur.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (usern,passw,form_role,))
+		if valid_input(usern, passw)==1:	
+			cur.execute("INSERT INTO users (username, password, role, active) VALUES (%s, %s, %s, %s)", (usern,passw,form_role,True,))
 			conn.commit()
-			session['user'] = usern
+			#session['user'] = usern
 			#session['role'] = form_role
-			return redirect(url_for('success'))
+			return "User successfully activated!"
+
+		if valid_input(usern, passw)==2:	
+			cur.execute("UPDATE users SET password=%s WHERE username=%s", (passw,usern,))
+			conn.commit()
+			return "User password successfully updated!"
 
 	session['user'] = ""
-	return redirect(url_for('error'))
+	return "Invalid input: be sure that the information entered is of correct length. Please try again!"
 	
 def valid_input(_username, _password):
 	cur.execute("SELECT username FROM users WHERE username=%s", (_username,))
 	existing_name = cur.fetchone()
-	if (existing_name or len(_username)>16 or len(_password)>16 or len(_username)==0):
+	if (len(_username)>16 or len(_password)>16 or len(_username)==0):
 		return False
-	return True
+	if existing_name:
+		return 2
+	return 1
+
+@app.route('/revoke_user', methods=['POST'])
+def revoke_user():
+	#if request.method=='GET':
+	#	return render_template('create_user.html')
+
+	if request.method=='POST':
+		usern     = request.form['user']
+		if valid_input(usern, "revoke")==2:	
+			cur.execute("DELETE FROM users WHERE username=%s", (usern,))
+			conn.commit()
+			#session['user'] = usern
+			#session['role'] = form_role
+			return "User successfully revoked! They have been obliterated from the database."
+
+	session['user'] = ""
+	return "Invalid input: be sure that the username entered exists and is of correct length. Please try again!"
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
 	session['asset_table'] = []
 	session['transfer_table'] = []
 	cur.execute("SELECT role FROM users WHERE username=%s", (session['user'],))
+	valid_get = cur.fetchone()
+	print(valid_get)
+	if valid_get is None:
+		return redirect(url_for('af_error'))
 	user_role = cur.fetchone()[0]
+	print(user_role)
+	if user_role is None:
+		return redirect(url_for('af_error'))
 	session['role'] = user_role
-
 	
 	sql = """SELECT req_id, requester, tf_asset, src_fac, des_fac, approver 
 FROM transfers 
@@ -109,6 +139,8 @@ WHERE tf_status='Pending'
 @app.route('/add_facility', methods=['GET','POST'])
 def add_facility():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('af_error'))
 		sql = "SELECT common_name, fcode, location FROM facilities"
 		cur.execute(sql)
 		res = cur.fetchall()  # this is the result of the database query "SELECT column_name1, column_name2 FROM some_table"
@@ -141,6 +173,8 @@ def valid_facility(name, code):
 @app.route('/add_asset', methods=['GET','POST'])
 def add_asset():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('af_error'))
 		# Ready the data to load the assets table
 		sql = """SELECT asset_tag, description, common_name, arrival, status, disposal 
 FROM assets a
@@ -212,6 +246,8 @@ def valid_date(_date):
 @app.route('/dispose_asset', methods=['GET','POST'])
 def dispose_asset():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('error'))
 		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
 			return render_template('dispose_asset.html')
@@ -260,6 +296,8 @@ WHERE (asset_tag=%s AND arrival<%s AND status='Present')
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('error'))
 		# Ready the data for the facillities drop-down
 		sql = "SELECT common_name FROM facilities"
 		cur.execute(sql)
@@ -308,6 +346,8 @@ WHERE (arrival<=%s AND (status='Present' OR disposal>%s) AND common_name=%s)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('error'))
 		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
 			# Ready the data to load the assets table
@@ -372,6 +412,8 @@ WHERE asset_tag=%s
 @app.route('/approve_req', methods=['GET','POST'])
 def approve_req():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('error'))
 		#print("printing role: " + session['role'])
 		if session['role']=="Facilities Officer": 
 			# Ready the data to load the requests table
@@ -417,6 +459,8 @@ WHERE tf_status='Pending'
 @app.route('/update_transit', methods=['GET','POST'])
 def update_transit():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('error'))
 		#print("printing role: " + session['role'])
 		if session['role']=="Logistics Officer": 
 			# Ready the data to load the requests table
@@ -505,6 +549,8 @@ WHERE (req_id=%s)
 @app.route('/transfer_report', methods=['GET','POST'])
 def transfer_report():
 	if request.method=='GET':
+		if session['user']=="":
+			return redirect(url_for('error'))
 		return render_template('transfer_report.html') 
 	
 
@@ -533,10 +579,14 @@ WHERE (load_dt<%s AND (unload_dt>%s OR unload_dt IS NULL))
 
 @app.route('/success')
 def success():
+	if session['user']=="":
+		return redirect(url_for('error'))
 	return render_template('success.html') 
 
 @app.route('/req_success')
 def req_success():
+	if session['user']=="":
+		return redirect(url_for('error'))
 	return render_template('req_success.html') 
 
 @app.route('/error')

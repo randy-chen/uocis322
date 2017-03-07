@@ -74,18 +74,22 @@
 			Have new assets you'd like to add? <input type="submit" value="Add Asset" />
 		</form>
 	<br>
+	{% if session['role']=='Logistics Officer' %}
 		<form action="{{url_for('dispose_asset')}}" method="GET">
 			Looking to get rid of an asset? <input type="submit" value="Dispose Asset" />
 		</form>
 	<br>
+	{% endif %}
 		<form action="{{url_for('asset_report')}}" method="GET">
 			Want to know about assets on a certain date? <input type="submit" value="Asset Report" />
 		</form>
 	<br>
+	{% if session['role']=='Logistics Officer' %}
 		<form action="{{url_for('transfer_req')}}" method="GET">
 			Want to request a transfer? <input type="submit" value="Request Transfer" />
 		</form>
 	<br>
+	{% endif %}
 		<form action="{{url_for('transfer_report')}}" method="GET">
 			Want to know about transfer requests made? <input type="submit" value="Transfer Report" />
 		</form>
