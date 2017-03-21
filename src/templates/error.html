@@ -1,7 +1,7 @@
 <html>
 	<head><title>Error</title></head>
 	<body><h1>Oops! Something went wrong.</h1>
-	<p>The username {{session['user']}}and the password entered did not match our records. Please try again.</p>
+	<p>Either the username {{session['user']}}and the password entered did not match our records, or you are not logged in to access this page. Please try again.</p>
 		<form action="{{url_for('login')}}" method="GET">
 			<input type="submit" value="Return to Login" />
 		</form>
