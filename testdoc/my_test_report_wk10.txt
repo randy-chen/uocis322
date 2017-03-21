@@ -1,0 +1,16 @@
+Randy Chen's report on testing Ashton Shears's Week 10 Project.
+
+1) Pass!
+2) Failed.
+3) Failed.
+4) Failed.
+5) Failed.
+6) Failed.
+7) Failed.
+8) Failed.
+9) Failed.
+10) Failed.
+
+I kept getting an internal server error whenever I tried to log in. Looks
+an sql query in app.py was causing issues. Unfortunately, I am unable to test 
+anything else. I hope this is fixed before the final submission!

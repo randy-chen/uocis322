@@ -1,16 +1,12 @@
-Randy Chen's report on testing Ashton Shears's Week 10 Project.
+# Ashton Shears's test report on Randy Chen's application.
 
-1) Pass!
-2) Failed.
-3) Failed.
-4) Failed.
-5) Failed.
-6) Failed.
-7) Failed.
-8) Failed.
-9) Failed.
-10) Failed.
-
-I kept getting an internal server error whenever I tried to log in. Looks
-an sql query in app.py was causing issues. Unfortunately, I am unable to test 
-anything else. I hope this is fixed before the final submission!
+1. Create user screen removed. PASS
+1.5. Successfully ran clients. PASS
+2. Able to Login. PASS
+3. Able to add facilities. PASS
+4. Able to add assets. PASS
+5. Able to dispose of assets. PASS
+6. Able to initate transfer request. PASS
+7. Able to accept transfer request approval. PASS
+8. Able to complete transfer request. PASS
+9. Able to generate reports. PASS
